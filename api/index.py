@@ -19,6 +19,10 @@ class GameInfo:
 settings = GameInfo()
 app = Flask(__name__)
 
+@app.route("/", methods=["POST", "GET"])
+def Rizz():
+    return "backend good"
+
 @app.route("/api/CachePlayFabId", methods=["GET", "POST"])
 def cacheplayfabid():
   return "", 200
