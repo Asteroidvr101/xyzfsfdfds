@@ -24,30 +24,13 @@ def cacheplayfabid():
   return "", 200
 
 @app.route("/api/PlayFabAuthentication", methods=["GET", "POST"])
-def playfab_authentication():
-    if 'UnityPlayer' not in request.headers.get('User-Agent', ''):
-        return jsonify({
-            "BanMessage": "Your account has been traced and you have been banned.",
-            "BanExpirationTime": "Indefinite"
-        }), 403
-        
+def playfab_authentication(): 
     what_the_BRUH = request.get_json()
     oculus_id = what_the_BRUH.get('OculusId')
     nonce = what_the_BRUH.get("Nonce")
-
-    oculus_response = requests.post("https://graph.oculus.com/user_nonce_validate", json={
-        "access_token": f"OC|9807548162641339|f4cedc6635c40602c7fd43608a7c92cc",
-        "nonce": nonce,
-        "user_id": oculus_id
-    })
+    
     print(oculus_response.status_code)
     print(oculus_response)
-    if oculus_response.status_code != 200 or not oculus_response.json().get("is_valid", False):
-        return jsonify({
-            "BanMessage": "Your account has been traced and you have been banned.",
-            "BanExpirationTime": "Indefinite"
-        }), 403
-
     login_req = requests.post(
         url = f"https://{settings.TitleId}.playfabapi.com/Server/LoginWithServerCustomId",
         json = {
