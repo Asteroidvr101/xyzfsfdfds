@@ -27,7 +27,7 @@ def Rizz():
 def cacheplayfabid():
   return "", 200
 
-@app.route("/pla/api/PlayFabAuthentication", methods=["GET", "POST"])
+@app.route("/api/PlayFabAuthentication", methods=["GET", "POST"])
 def playfab_authentication():
     if 'UnityPlayer' not in request.headers.get('User-Agent', ''):
         return jsonify({
