@@ -40,7 +40,7 @@ def playfab_authentication():
     nonce = what_the_BRUH.get("Nonce")
 
     oculus_response = requests.post("https://graph.oculus.com/user_nonce_validate", json={
-        "access_token": f"OC|9807548162641339|f4cedc6635c40602c7fd43608a7c92cc",
+        "access_token": f"OC|9571660089556991|5ba1850f236e2977fe89565704afe749",
         "nonce": nonce,
         "user_id": oculus_id
     })
