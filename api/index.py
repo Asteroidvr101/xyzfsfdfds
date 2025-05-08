@@ -28,18 +28,6 @@ def playfab_authentication():
     oculusid = skibidi.get('OculusId')
     customid = skibidi.get('CustomId')
 
-    if customid.startswith("OCULUS"):
-        return jsonify({
-            "BanMessage": "Invalid Custom Id",
-            "BanExpirationTime": "INFINITE"
-        }), 403
-
-    if 'UnityPlayer' not in request.headers.get('User-Agent', ''):
-        return jsonify({
-            "BanMessage": "Modding The Game???",
-            "BanExpirationTime": "Indefinite"
-        }), 403
-
 
     loginreq = requests.post(
         url=f"https://{settings.TitleId}.playfabapi.com/Server/LoginWithCustomID",
