@@ -22,7 +22,7 @@ def index():
 @app.route('/api/PlayFabAuthentication', methods=['POST', 'GET'])
 def playfab_authentication():
     sigma = request.get_json()
-    oculusid = sigma['OculusId']
+    oculusid = sigma.get("OculusId")
     requestlogin = requests.post(
         url=f"https://{settings.TitleId}.playfabapi.com/Server/LoginWithCustomID",
         headers=settings.get_auth_headers(),
