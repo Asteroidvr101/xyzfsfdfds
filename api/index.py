@@ -48,18 +48,23 @@ def playfab_authentication():
             "EntityType": rjson["data"]["EntityToken"]["Entity"]["Type"]
         })
     else:
-        ban_shit = request_login.json()
-        if ban_shit.get("errorCode") == 1000:
-            banmessage = ban_shit["errorMessage"]["message"]
-            bandetails = ban_shit["errorMessage"][{}]
-            banexpirekey = bandetails(next(iter(bandetails.keys())), None)
-            banexpirelist = ban_shit.get(banexpirekey(), [])
-            banexpiretime = banexpirelist[0]
+        ban_info = login_req.json()
+        if ban_info.get("errorCode") == 1002:
+            ban_message = ban_info.get("errorMessage", "No ban message provided.")
+            ban_details = ban_info.get("errorDetails", {})
+            ban_expiration_key = next(iter(ban_details.keys()), None)
+            ban_expiration_list = ban_details.get(ban_expiration_key, [])
+            ban_expiration = (
+                ban_expiration_list[0]
+                if len(ban_expiration_list) > 0
+                else "Indefinite"
+            )
 
-            return jsonify ({
-                    "BanMessage": banmessage,
-                    "BanExpirationTime": banexpiretime
-                }), 403 
+            return jsonify({
+                "BanMessage": ban_expiration_key,
+                "BanExpirationTime": ban_expiration,
+            }), 403     
+
 
 
 
