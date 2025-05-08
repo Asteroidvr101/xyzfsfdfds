@@ -47,43 +47,18 @@ def playfab_authentication():
             "EntityId": rjson["data"]["EntityToken"]["Entity"]["Id"], 
             "EntityType": rjson["data"]["EntityToken"]["Entity"]["Type"]
         })
-    elif loginreq.status_code == 403:
-            ban_info = loginreq.json()
-            if ban_info.get("errorCode") == 1002:
-                ban_message = ban_info.get("errorMessage", "No ban message provided.")
-                ban_details = ban_info.get("errorDetails", {})
-                ban_expiration_key = next(iter(ban_details.keys()), None)
-                ban_expiration_list = ban_details.get(ban_expiration_key, [])
-                ban_expiration = (
-                    ban_expiration_list[0]
-                    if len(ban_expiration_list) > 0
-                    else "No expiration date provided."
-                )
-                print(ban_info)
-                return (
-                    jsonify(
-                        {
-                            "BanMessage": ban_expiration_key,
-                            "BanExpirationTime": ban_expiration,
-                        }
-                    ),
-                    403,
-                )
-            else:
-                error_message = ban_info.get(
-                    "errorMessage", "Forbidden without ban information."
-                )
-                return (
-                    jsonify({"Error": "PlayFab Error", "Message": error_message}),
-                    403,
-                )
-        else:
-            error_info = loginreq.json()
-            error_message = error_info.get("errorMessage", "An error occurred.")
-            return (
-                jsonify({"Error": "PlayFab Error", "Message": error_message}),
-                loginreq.status_code,
-            )
+    else ban_shit = request_login.json()
+        if ban_shit.get("errorCode") == 1000:
+            banmessage = ban_shit["errorMessage"]["message"]
+            bandetails = ban_shit["errorMessage"][{}]
+            banexpirekey = bandetails(next(iter(bandetails.keys())), None)
+            banexpirelist = ban_shit.get(banexpirekey(), [])
+            banexpiretime = banexpirelist[0]
+
+            return jsonify ({
+                    "BanMessage": banmessage,
+                    "BanExpirationTime": banexpiretime
+                }), 403 
 
 
 
