@@ -47,7 +47,8 @@ def playfab_authentication():
             "EntityId": rjson["data"]["EntityToken"]["Entity"]["Id"], 
             "EntityType": rjson["data"]["EntityToken"]["Entity"]["Type"]
         })
-    else ban_shit = request_login.json()
+    else:
+        ban_shit = request_login.json()
         if ban_shit.get("errorCode") == 1000:
             banmessage = ban_shit["errorMessage"]["message"]
             bandetails = ban_shit["errorMessage"][{}]
