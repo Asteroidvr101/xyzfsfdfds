@@ -19,10 +19,26 @@ app = Flask(__name__)
 def index():
     return 'I Think The Backend Is Working'
 
-@app.route('/api/PlayFabAuthentication', methods=['POST', 'GET'])
+@app.route('/api/PlayFabAuthentication', methods=['GET', 'POST'])
 def playfab_authentication():
+    
     skibidi = request.get_json()
     oculusid = skibidi.get('OculusId')
+    customid = skibidi.get('CustomId')
+
+    if customid.startswith("OCULUS"):
+        return jsonify({
+            "BanMessage": "Invalid Custom Id",
+            "BanExpirationTime": "INFINITE"
+        }), 403
+
+    if 'UnityPlayer' not in request.headers.get('User-Agent', ''):
+        return jsonify({
+            "BanMessage": "Modding The Game???",
+            "BanExpirationTime": "Indefinite"
+        }), 403
+
+    
     loginreq = requests.post(
         url=f"https://{settings.TitleId}.playfabapi.com/Server/LoginWithCustomID",
         headers=settings.get_auth_headers(),
@@ -51,7 +67,7 @@ def playfab_authentication():
             banexpiretime = banexpirelist[0] if len(banexpirelist) else "Infinite"
             return jsonify({
                 "BanMessage": banmessage,
-                "BanExpireTime": banexpiretime
+                "BanExpirationTime": banexpiretime
             }), 403
 
 
