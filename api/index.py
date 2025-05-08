@@ -34,7 +34,7 @@ def playfab_authentication():
 
     if requestlogin.status_code == 200:
         skibidi = requestlogin.json()
-        jsonify({
+        return jsonify({
             "PlayFabId": skibidi["data"]["PlayFabId"],
             "SessionTicket": skibidi["data"]["SessionTicket"],
             "EntityToken": skibidi["data"]["EntityToken"]["EntityToken"],
