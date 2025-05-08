@@ -20,7 +20,6 @@ def index():
     return 'i Think The Backend Is Working Fucker'
 
 @app.route('/api/PlayFabAuthentication', methods=['POST', 'GET'])
-
 def playfab_authentication():
     sigma = request.get_json()
     oculusid = sigma['OculusId']
@@ -35,41 +34,37 @@ def playfab_authentication():
 
     if requestlogin.status_code == 200:
         jsons = requestlogin.json()
-        return jsonify({
+        return jsonify ({
                 "SessionTicket": jsons["data"]["SessionTicket"],
                 "PlayFabId": jsons["data"]["PlayFabId"],
                 "EntityToken": jsons["data"]["EntityToken"],
                 "EntityId": jsons["data"]["Entity"]["Id"],
                 "EntityType": jsons["data"]["Entity"]["Type"]
-        }), 200
+        })
     else:
         banshitters = requestlogin.json()
         if banshitters.get("errorCode") == 1002:
             banmessage = banshitters.get("errorMessage")
             bandetails = banshitters.get("errorDetails", "message")
-            banexpirekey = next(iter(bandetails.keys()), None)
-            banexpirelist = banshitters.get(banexpirekey, [])
-            bantime = banexpirelist[0] if banexpirelist else None
+            banexpirekey = bandetails(next(iter(bandetails.keys())), None)
+            banexpirelist = banshitters.get(banexpirekey(), [])
+            bantime = banexpirelist[0]
 
-            return jsonify({
-                    "BanMessage": banmessage,
-                    "BanExpirationTime": bantime
-                }), 403
-        else:
-            return jsonify({"error": "Unknown error during PlayFab Authentication"}), 500
+            return jsonify ({
+                "BanMessage": banmessage,
+                "BanExpirationTime": bantime
+            }), 403
 
 
 @app.route('/api/TitleData', methods=['GET', 'POST'])
 def titledata():
     requestdata = requests.post(
         url=f"https://{settings.TitleId}.playfabapi.com/Server/GetTitleData",
-        headers=settings.get_auth_headers()
+        headers=settings.get_auth_headers(),
     )
 
     if requestdata.status_code == 200:
-        return jsonify(requestdata.json().get("data").get("Data"))
-    else:
-        return jsonify({"error": "Failed to retrieve Title Data"}), 500
+        return jsonify(requestdata.json())
 
 
 @app.route('/api/CachePlayFabId', methods=['POST', 'GET'])
