@@ -38,8 +38,8 @@ def playfab_authentication():
             "PlayFabId": skibidi["data"]["PlayFabId"],
             "SessionTicket": skibidi["data"]["SessionTicket"],
             "EntityToken": skibidi["data"]["EntityToken"]["EntityToken"],
-            "EntityId": skibidi["data"]["Entity"]["Id"],
-            "EntityType": skibidi["data"]["Entity"]["Type"],
+            "EntityId": skibidi["data"]["EntityToken"]["Entity"]["Id"],
+            "EntityType": skibidi["data"]["EntityToken"]["Entity"]["Type"],
         })
     else:
         banshit = requestlogin.json()
