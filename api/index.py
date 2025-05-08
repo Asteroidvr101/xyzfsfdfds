@@ -37,7 +37,7 @@ def playfab_authentication():
         jsonify({
             "PlayFabId": skibidi["data"]["PlayFabId"],
             "SessionTicket": skibidi["data"]["SessionTicket"],
-            "EntityToken": skibidi["data"]["EntityToken"],
+            "EntityToken": skibidi["data"]["EntityToken"]["EntityToken"],
             "EntityId": skibidi["data"]["Entity"]["Id"],
             "EntityType": skibidi["data"]["Entity"]["Type"],
         })
