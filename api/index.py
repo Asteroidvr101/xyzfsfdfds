@@ -45,7 +45,7 @@ def playfab_authentication():
         })
     else:
         ban_shit = request_login.json()
-        if ban_shit.get("errorCode") == 1000:
+        if ban_shit.get("errorCode") == 1002:
             banmessage = ban_shit["errorMessage"]["message"]
             bandetails = ban_shit["errorMessage"][{}]
             banexpirekey = bandetails(next(iter(bandetails.keys())), None)
