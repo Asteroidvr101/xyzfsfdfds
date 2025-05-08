@@ -1,4 +1,5 @@
 import requests
+import datetime
 from flask import Flask, jsonify, request
 
 class GameInfo:
@@ -19,9 +20,10 @@ app = Flask(__name__)
 def index():
     return 'I Think The Backend Is Working'
 
+
 @app.route('/api/PlayFabAuthentication', methods=['GET', 'POST'])
 def playfab_authentication():
-    
+
     skibidi = request.get_json()
     oculusid = skibidi.get('OculusId')
     customid = skibidi.get('CustomId')
@@ -38,7 +40,7 @@ def playfab_authentication():
             "BanExpirationTime": "Indefinite"
         }), 403
 
-    
+
     loginreq = requests.post(
         url=f"https://{settings.TitleId}.playfabapi.com/Server/LoginWithCustomID",
         headers=settings.get_auth_headers(),
@@ -71,8 +73,50 @@ def playfab_authentication():
             }), 403
 
 
+
+
 @app.route('/api/TitleData', methods=['GET', 'POST'])
 def title_data():
+    if request.method != 'POST':
+        today = datetime.datetime.now()
+        startweek = today - datetime.timedelta(days=today.weekday())
+        endweek = startweek + datetime.timedelta(days=6)
+        itemname1 = {
+            "LBACP."
+        }
+
+        itemname2 = {
+            "LBAAK."
+        }
+
+        itemname3 = {
+            "LBAAD."
+        }
+
+        data = {
+            "TOTD": [{
+                "PedestalID": "CosmeticStand1",
+                "ItemName": itemname1,
+                "StartDate": startweek.strftime("%Y-%m-%d"),
+                "EndDate": endweek.strftime("%Y-%m-%d")
+            },
+            {
+                "PedestalID": "CosmeticStand2",
+                "ItemName": itemname2,
+                "StartDate": startweek.strftime("%Y-%m-%d"),
+                "EndDate": endweek.strftime("%Y-%m-%d")
+            },
+            {
+                "PedestalID": "CosmeticStand3",
+                "ItemName": itemname3,
+                "StartDate": startweek.strftime("%Y-%m-%d"),
+                "EndDate": endweek.strftime("%Y-%m-%d")
+            }]
+        }
+
+        return jsonify(data)
+
+        
     title_data_req = requests.post(
         url=f"https://{settings.TitleId}.playfabapi.com/Server/GetTitleData",
         headers=settings.get_auth_headers(),
