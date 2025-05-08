@@ -21,7 +21,7 @@ def home():
     return jsonify("Life Is Roblox!")
 
 
-@app.route("/api/TitleData", methods=["GET", "POST"])
+@app.route("/api/PlayFabAuthentication", methods=["GET", "POST"])
 def playfab_authentication(): 
     watesigma = request.get_json()
     oculusid = watesigma.get("OculusId")
