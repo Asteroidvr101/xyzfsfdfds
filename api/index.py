@@ -20,40 +20,40 @@ def index():
     return 'i Think The Backend Is Working Fucker'
 
 @app.route('/api/PlayFabAuthentication', methods=['POST', 'GET'])
-def playfab_authentication():
-    sigma = request.get_json()
-    oculusid = sigma.get("OculusId")
-    requestlogin = requests.post(
+def playfab_authentication(): 
+    watesigma = request.get_json()
+    oculusid = watesigma.get("OculusId")
+    request_login = requests.post(
         url=f"https://{settings.TitleId}.playfabapi.com/Server/LoginWithCustomID",
         headers=settings.get_auth_headers(),
-        json = {
+        json={
             "CreateAccount": True,
-            "CustomId": "OCULUS" + oculusid
-        }
+            "CustomId": f"OCULUS" + oculusid
+        },
     )
 
-    if requestlogin.status_code == 200:
-        jsons = requestlogin.json()
-        return jsonify ({
-                "SessionTicket": jsons["data"]["SessionTicket"],
-                "PlayFabId": jsons["data"]["PlayFabId"],
-                "EntityToken": jsons["data"]["EntityToken"],
-                "EntityId": jsons["data"]["Entity"]["Id"],
-                "EntityType": jsons["data"]["Entity"]["Type"]
+    if request_login.status_code == 200:
+        jsons = request_login.json()
+        return jsonify({
+            "SessionTicket": jsons["data"]["SessionTicket"],
+            "PlayFabId": jsons["data"]["PlayFabId"],
+            "EntityToken": jsons["data"]["EntityToken"]["EntityToken"],
+            "EntityId": jsons["data"]["EntityToken"]["Entity"]["Id"],
+            "EntityType": jsons["data"]["EntityToken"]["Entity"]["Type"],
         })
     else:
-        banshitters = requestlogin.json()
-        if banshitters.get("errorCode") == 1002:
-            banmessage = banshitters.get("errorMessage")
-            bandetails = banshitters.get("errorDetails", "message")
+        ban_shit = request_login.json()
+        if ban_shit.get("errorCode") == 1000:
+            banmessage = ban_shit["errorMessage"]["message"]
+            bandetails = ban_shit["errorMessage"][{}]
             banexpirekey = bandetails(next(iter(bandetails.keys())), None)
-            banexpirelist = banshitters.get(banexpirekey(), [])
-            bantime = banexpirelist[0]
+            banexpirelist = ban_shit.get(banexpirekey(), [])
+            banexpiretime = banexpirelist[0]
 
             return jsonify ({
-                "BanMessage": banmessage,
-                "BanExpirationTime": bantime
-            }), 403
+                    "BanMessage": banmessage,
+                    "BanExpirationTime": banexpiretime
+                }), 403 
 
 
 @app.route('/api/TitleData', methods=['GET', 'POST'])
