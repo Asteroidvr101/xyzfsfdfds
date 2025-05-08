@@ -82,7 +82,6 @@ def playfab_authentication():
 
 @app.route('/api/TitleData', methods=['GET', 'POST'])
 def title_data():
-    if request.method != 'POST':
         today = datetime.datetime.now()
         startweek = today - datetime.timedelta(days=today.weekday())
         endweek = startweek + datetime.timedelta(days=6)
