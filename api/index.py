@@ -15,86 +15,66 @@ class GameInfo:
 settings = GameInfo()
 app = Flask(__name__)
 
-@app.route("/", methods=["POST", "GET"])
-def home():
-    return jsonify("Life Is Roblox!")
+@app.route('/')
+def index():
+    return 'i Think The Backend Is Working Fucker'
 
-@app.route("/api/PlayFabAuthentication", methods=["GET", "POST"])
+@app.route('/api/PlayFabAuthentication', methods=['POST', 'GET'])
+
 def playfab_authentication():
-    watesigma = request.get_json()
-    oculusid = watesigma.get("OculusId")
-    request_login = requests.post(
+    sigma = request.get_json()
+    oculusid = sigma['OculusId']
+    requestlogin = requests.post(
         url=f"https://{settings.TitleId}.playfabapi.com/Server/LoginWithCustomID",
         headers=settings.get_auth_headers(),
-        json={
+        json = {
             "CreateAccount": True,
-            "CustomId": f"OCULUS{oculusid}"
-        },
+            "CustomId": "OCULUS" + oculusid
+        }
     )
 
-    if request_login.status_code == 200:
-        jsons = request_login.json()
+    if requestlogin.status_code == 200:
+        jsons = requestlogin.json()
         return jsonify({
-            "SessionTicket": jsons["data"]["SessionTicket"],
-            "PlayFabId": jsons["data"]["PlayFabId"],
-            "EntityToken": jsons["data"]["EntityToken"]["EntityToken"],
-            "EntityId": jsons["data"]["EntityToken"]["Entity"]["Id"],
-            "EntityType": jsons["data"]["EntityToken"]["Entity"]["Type"],
-        })
+                "SessionTicket": jsons["data"]["SessionTicket"],
+                "PlayFabId": jsons["data"]["PlayFabId"],
+                "EntityToken": jsons["data"]["EntityToken"],
+                "EntityId": jsons["data"]["Entity"]["Id"],
+                "EntityType": jsons["data"]["Entity"]["Type"]
+        }), 200
     else:
-        ban_shit = request_login.json()
-        if ban_shit.get("errorCode") == 1002:
-            banmessage = ban_shit["errorMessage"]["message"]
-            bandetails = ban_shit["errorMessage"][{}]
-            banexpirekey = bandetails(next(iter(bandetails.keys())), None)
-            banexpirelist = ban_shit.get(banexpirekey(), [])
-            banexpiretime = banexpirelist[0]
+        banshitters = requestlogin.json()
+        if banshitters.get("errorCode") == 1002:
+            banmessage = banshitters.get("errorMessage")
+            bandetails = banshitters.get("errorDetails", "message")
+            banexpirekey = next(iter(bandetails.keys()), None)
+            banexpirelist = banshitters.get(banexpirekey, [])
+            bantime = banexpirelist[0] if banexpirelist else None
 
-            return jsonify ({
-                "BanMessage": banmessage,
-                "BanExpirationTime": banexpiretime
-            }), 403
+            return jsonify({
+                    "BanMessage": banmessage,
+                    "BanExpirationTime": bantime
+                }), 403
+        else:
+            return jsonify({"error": "Unknown error during PlayFab Authentication"}), 500
 
-@app.route("/api/TitleData", methods=["POST", "GET"])
+
+@app.route('/api/TitleData', methods=['GET', 'POST'])
 def titledata():
-    response = requests.post(
+    requestdata = requests.post(
         url=f"https://{settings.TitleId}.playfabapi.com/Server/GetTitleData",
-        headers=settings.get_auth_headers(),
+        headers=settings.get_auth_headers()
     )
 
-    if response.status_code == 200:
-        return jsonify(response.json().get("data").get("Data"))
-
-@app.route("/postname", methods=["POST", "GET"])
-def postname():
-    data = request.get_json().get("FunctionArgument")
-    erm = request.get_json()
-    playfabid = erm.get("PlayFabId")
-    name = data.get("name")
-    room = data.get("forRoom")
-
-    if name in ["KKK", "HITLER", "NAZI", "FUCK", "SHIT", "DICK", "PENIS", "ASS", "ASSHOLE", "FUCKER", "FUCKING", "FUCKED", "NIGGA", "NIGGER", "NI44A", "NIGG4", "NIGG4R", "NIGG4RS"]:
-        result = 2
+    if requestdata.status_code == 200:
+        return jsonify(requestdata.json().get("data").get("Data"))
     else:
-        result = 0
+        return jsonify({"error": "Failed to retrieve Title Data"}), 500
 
-    if result == 2:
-        sigma = requests.post(
-            url=f"https://{settings.TitleId}.playfabapi.com/Server/ExecuteCloudScript",
-            headers=settings.get_auth_headers(),
-            json={
-                "FunctionName": "BanMe",
-                "FunctionParameter": {
-                    "PlayFabId": playfabid,
-                    "DurationInHours": 72,
-                    "Reason": "BAD NAME"
-                }
-            }
-        )
 
-@app.route("/api/CachePlayFabId", methods=["POST", "GET"])
-def cache_playfab_id():
-    return "What The Helly", 200
+@app.route('/api/CachePlayFabId', methods=['POST', 'GET'])
+def cacheplayfabid():
+    return "Niggas In Parise", 200
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080)
+if __name__ == '__main__':
+  app.run(host='0.0.0.0', port=5000)
