@@ -58,7 +58,7 @@ def playfab_authentication():
                 }), 403 
 
 @app.route("/api/TitleData", methods=["POST", "GET"])
-def titledata():
+def titledata1():
 
     response = requests.post(
         url=f"https://{settings.TitleId}.playfabapi.com/Server/GetTitleData",
