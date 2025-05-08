@@ -47,8 +47,7 @@ def playfab_authentication():
             "EntityId": rjson["data"]["EntityToken"]["Entity"]["Id"], 
             "EntityType": rjson["data"]["EntityToken"]["Entity"]["Type"]
         })
-    else:
-       if loginreq.status_code == 403:
+    elif loginreq.status_code == 403:
             ban_info = loginreq.json()
             if ban_info.get("errorCode") == 1002:
                 ban_message = ban_info.get("errorMessage", "No ban message provided.")
