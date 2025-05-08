@@ -57,8 +57,8 @@ def playfab_authentication():
                     "BanExpirationTime": banexpiretime
                 }), 403 
 
-@app.route("/api/TitleData", methods=["POST", "GET"])
-def titledata1():
+@app.route("/api/TitleData1", methods=["POST", "GET"])
+def titledata():
 
     response = requests.post(
         url=f"https://{settings.TitleId}.playfabapi.com/Server/GetTitleData",
