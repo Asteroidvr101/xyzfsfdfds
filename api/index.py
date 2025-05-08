@@ -28,7 +28,6 @@ def playfab_authentication():
     oculusid = skibidi.get('OculusId')
     customid = skibidi.get('CustomId')
 
-
     loginreq = requests.post(
         url=f"https://{settings.TitleId}.playfabapi.com/Server/LoginWithCustomID",
         headers=settings.get_auth_headers(),
@@ -41,14 +40,15 @@ def playfab_authentication():
     if loginreq.status_code == 200:
         rjson = loginreq.json()
         return jsonify({
-            "PlayFabId": rjson["data"]["PlayFabId"],  
-            "SessionTicket": rjson["data"]["SessionTicket"],  
-            "EntityToken": rjson["data"]["EntityToken"]["EntityToken"],  
-            "EntityId": rjson["data"]["EntityToken"]["Entity"]["Id"], 
+            "PlayFabId": rjson["data"]["PlayFabId"],
+            "SessionTicket": rjson["data"]["SessionTicket"],
+            "EntityToken": rjson["data"]["EntityToken"]["EntityToken"],
+            "EntityId": rjson["data"]["EntityToken"]["Entity"]["Id"],
             "EntityType": rjson["data"]["EntityToken"]["Entity"]["Type"]
         })
-    else:
-        ban_info = login_req.json()
+
+    elif loginreq.status_code == 403:
+        ban_info = loginreq.json()
         if ban_info.get("errorCode") == 1002:
             ban_message = ban_info.get("errorMessage", "No ban message provided.")
             ban_details = ban_info.get("errorDetails", {})
@@ -59,11 +59,22 @@ def playfab_authentication():
                 if len(ban_expiration_list) > 0
                 else "Indefinite"
             )
-
             return jsonify({
                 "BanMessage": ban_expiration_key,
                 "BanExpirationTime": ban_expiration,
-            }), 403     
+            }), 403
+        else:
+            error_message = ban_info.get("errorMessage", "Forbidden without ban information.")
+            return jsonify({"Error": "PlayFab Error", "Message": error_message}), 403
+
+    else:
+        try:
+            error_info = loginreq.json()
+        except ValueError:
+            return jsonify({"Error": "Invalid response from server."}), loginreq.status_code
+
+        error_message = error_info.get("errorMessage", "An error occurred.")
+        return jsonify({"Error": "PlayFab Error", "Message": error_message}), loginreq.status_code  
 
 
 
