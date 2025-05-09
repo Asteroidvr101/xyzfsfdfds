@@ -64,33 +64,18 @@ def playfab_auth():
         }), 200
     else:
         if requestlog.status_code == 403:
-            bannywanny = requestlog.json()
-            if bannywanny.get("errorCode") == 1002:
-                banmessage = bannywanny.get("errorMessage", "No Message Found")
-                bandetails = bannywanny.get("errorDetails", {})
-                banexpirekey = next(iter(bandetails.keys()), None)
-                banexpirelist = bannywanny.get(banexpirekey, [])
-                banexpire = banexpirelist[0] if len(
-                    banexpirelist) > 0 else "Infinite"
-                print(bannywanny)
+            banshit = requestlog.json()
+            if banshit.get('errorCode') == 1002:
+                banmessage = banshit.get('errorMessage', 'No Message Found.')
+                bandetails = banshit.get('errorDetails', {})
+                banexpkey = next(iter(bandetails.keys()), None)
+                banexplist = bandetails.get(banexpkey, [])
+                banexpirationtime = banexplist[0] if len(banexplist) else "Infinite"
+                print (banshit)
                 return jsonify({
-                    "BanMessage": banexpirekey,
-                    "BanExpirationTime": banexpire
+                    "BanMessage": banexpkey,
+                    "BanExpirationTime": banexpirationtime
                 }), 403
-            else:
-                errormessage = bannywanny.get("errorMessage",
-                                              "No Message Found")
-                return jsonify({
-                    "Error": "PlayFabError",
-                    "Message": errormessage
-                }), 403
-        else:
-            errorinfo = requestlog.json()
-            errormessages = errorinfo.get("errorMessage", "An Error Occurred")
-            return jsonify({
-                "Error": "PlayFabError",
-                "Message": errormessages
-            }), 403
 
 
 @app.route('/api/CachePlayFabId', methods=['POST', 'GET'])
