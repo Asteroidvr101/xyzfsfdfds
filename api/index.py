@@ -1,6 +1,9 @@
+import datetime
 from flask import Flask, request, jsonify
 import requests
 from werkzeug.datastructures import headers
+from datetime import datetime, timedelta
+
 
 
 class GameSettings:
@@ -27,16 +30,17 @@ def index():
 
 pollers = [
     {
-        "PollId": 3,
-        "Question": "Do You Like This Backend?",
-        "VoteOptions": ["YES", "NO"],
-        "VoteCount": [],
-        "PredictionCount": [],
-        "StartTime": "2025-05-09T00:00:00Z",
-        "EndTime": "2025-05-10T00:00:00Z",
+        "pollId": 3,
+        "question": "Do You Like This Backend?",
+        "voteOptions": ["YES", "NO"],
+        "voteCount": [],
+        "predictionCount": [],
+        "startTime": "2025-05-09T00:00:00Z",
+        "endTime": "2025-05-10T00:00:00Z",
         "isActive": True
     }
 ]
+
 
 
 @app.route('/api/PlayFabAuthentication', methods=['POST', 'GET'])
@@ -80,15 +84,15 @@ def playfab_auth():
 def cache_playfab_id():
     return 'HAHA', 200
 
-
 @app.route('/api/TitleData', methods=['GET', 'POST'])
 def title_data():
-    requestdata = requests.post(
+    titledatas = requests.post(
         url=f"https://{settings.TitleId}.playfabapi.com/Server/GetTitleData",
-        headers=settings.auth_headers())
+        headers=settings.auth_headers(),
+    )
 
-    if requestdata.status_code == 200:
-        return jsonify(requestdata.json())
+    if titledatas.status_code == 200:
+        return jsonify(titledatas.json()), 200
 
 
 @app.route('/api/FetchPoll', methods=['GET', 'POST'])
@@ -103,7 +107,7 @@ def vote():
     optionindex = data.get("OptionIndex")
     isprediction = data.get("IsPrediction")
     playfabid = data.get("PlayFabId")
-    sigma = next((poll for poll in pollers if poll["PollId"] == poll_id), None)
+    sigma = next((poll for poll in pollers if poll["pollId"] == poll_id), None)
 
     if not sigma:
             return "Poll Not Found", 404
