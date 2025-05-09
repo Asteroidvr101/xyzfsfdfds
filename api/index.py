@@ -84,7 +84,7 @@ def playfab_auth():
 def cache_playfab_id():
     return 'HAHA', 200
 
-itemname1 = "LMAGB."
+itemname1 = "LMAJD."
 itemname2 = "LBACP."
 itemname3 = "LMAKH."
 
