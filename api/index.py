@@ -109,8 +109,8 @@ def title_data():
                     "EndTimeUTC": endweek.strftime("%Y-%m-%dT23:59:59Z")
                 },
                 {
-                    "PedestalID": "CosmeticStand2",
-                    "ItemName": itemname2,
+                    "PedestalID": "CosmeticStand3",
+                    "ItemName": itemname3,
                     "StartTimeUTC": startweek.strftime("%Y-%m-%dT00:00:00Z"),
                     "EndTimeUTC": endweek.strftime("%Y-%m-%dT23:59:59Z")
                 }
