@@ -42,38 +42,24 @@ def playfab_authentication():
             "EntityToken": skibdata["data"]["EntityToken"]["EntityToken"],
             "EntityId": skibdata["data"]["EntityToken"]["Entity"]["Id"],
             "EntityType": skibdata["data"]["EntityToken"]["Entity"]["Type"],
-        })
+        }), 200
     else:
         if requestlogin.status_code == 403:
-            bannywanny = requestlogin.json()
-            if bannywanny["errorCode"] == 1002:
-                banmessage = bannywanny["errorMessage", "No Ban Message Found."]
-                bandetails = bannywanny["errorDetails", {}]
+            banshit = requestlogin.json()
+            if banshit.get("errorCode") == 1002:
+                banmessage = banshit.get("errorMessage", "No Message")
+                bandetails = banshit.get("errorDetails", {})
                 banexpirekey = next(iter(bandetails.keys()), None)
-                banexpirelist = bannywanny.get(banexpirekey, [])
-                banexpiretime = {
-                    banexpirelist[0]
-                    if len(banexpirelist) > 0
-                    else "Infinite"
-                }
-                print(bannywanny)
+                banexpirelist = bandetails.get(banexpirekey, [])
+                banexpiretime = banexpirelist[0] if len(banexpirelist) > 0 else "Infinite"
+                print (banshit)
                 return jsonify({
-                    "message": banmessage,
-                    "expire": banexpiretime,
+                    "BanMessage": banmessage,
+                    "BanExpirationTime": banexpiretime
                 }), 403
             else:
-                errormessage = bannywanny.get("errorMessage", "Forbidden without ban information.")
-                return (
-                    jsonify({"Error": "PlayFab Error", "Message": errormessage}),
-                    403,
-                )
-        else:
-            errorinfo = requestlogin.json()
-            errormessage = errorinfo.get("errorMessage", "An error occurred.")
-            return (
-                jsonify({"Error": "PlayFab Error", "Message": errormessage}),
-                requestlogin.status_code,
-            )
+                error = banshit.get("errorMessage", "An unknown error occurred.")
+                return jsonify({"error": "PlayFabError", "Message": error}), 403
                     
 
 
