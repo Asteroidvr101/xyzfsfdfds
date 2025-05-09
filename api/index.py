@@ -44,25 +44,26 @@ def playfab_authentication():
             "EntityType": skibdata["data"]["EntityToken"]["Entity"]["Type"],
         })
     else:
-        bannywanny = requestlogin.json()
-        if bannywanny["errorCode"] == 1002:
-            banmessage = bannywanny["errorMessage", "No Ban Message Found."]
-            bandetails = bannywanny["errorDetails", []]
-            banexpirekey = bandetails(next(iter(bandetails.keys())), None)
-            banexpirelist = bannywanny.get(banexpirekey(), [])
-            banexpiretime = {
-                banexpirelist[0]
-                if len(banexpirelist) > 0
-                else "Infinite"
-            }
+        if requestlogin.status_code == 403:
+            bannywanny = requestlogin.json()
+            if bannywanny["errorCode"] == 1002:
+                banmessage = bannywanny["errorMessage", "No Ban Message Found."]
+                bandetails = bannywanny["errorDetails", []]
+                banexpirekey = bandetails(next(iter(bandetails.keys())), None)
+                banexpirelist = bannywanny.get(banexpirekey(), [])
+                banexpiretime = {
+                    banexpirelist[0]
+                    if len(banexpirelist) > 0
+                    else "Infinite"
+                }
 
-            return jsonify({
-                "message": banmessage,
-                "expire": banexpiretime,
-            })
-        else: 
-            errormessage = bannywanny.get("errorMessage", "Unknown error")
-            return jsonify({"Error": "PlayFab Error", "Message": errormessage}), 403
+                return jsonify({
+                    "message": banmessage,
+                    "expire": banexpiretime,
+                })
+            else: 
+                errormessage = bannywanny.get("errorMessage", "Unknown error")
+                return jsonify({"Error": "PlayFab Error", "Message": errormessage}), 403
 
 @app.route('/api/CachePlayFabId', methods=['POST', 'GET'])
 def cache_playfab_id():
