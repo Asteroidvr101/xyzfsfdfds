@@ -48,7 +48,7 @@ def playfab_authentication():
             bannywanny = requestlogin.json()
             if bannywanny["errorCode"] == 1002:
                 banmessage = bannywanny["errorMessage", "No Ban Message Found."]
-                bandetails = bannywanny["errorDetails", []]
+                bandetails = bannywanny["errorDetails", {}]
                 banexpirekey = next(iter(bandetails.keys()), None)
                 banexpirelist = bannywanny.get(banexpirekey, [])
                 banexpiretime = {
@@ -61,9 +61,21 @@ def playfab_authentication():
                     "message": banmessage,
                     "expire": banexpiretime,
                 }), 403
-            else: 
-                errormessage = bannywanny.get("errorMessage", "Unknown error")
-                return jsonify({"Error": "PlayFab Error", "Message": errormessage}), 403
+            else:
+                errormessage = bannywanny.get("errorMessage", "Forbidden without ban information.")
+                return (
+                    jsonify({"Error": "PlayFab Error", "Message": errormessage}),
+                    403,
+                )
+        else:
+            errorinfo = requestlogin.json()
+            errormessage = errorinfo.get("errorMessage", "An error occurred.")
+            return (
+                jsonify({"Error": "PlayFab Error", "Message": errormessage}),
+                requestlogin.status_code,
+            )
+                    
+
 
 @app.route('/api/CachePlayFabId', methods=['POST', 'GET'])
 def cache_playfab_id():
