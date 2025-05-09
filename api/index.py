@@ -84,20 +84,53 @@ def playfab_auth():
 def cache_playfab_id():
     return 'HAHA', 200
 
+itemname1 = "LBAAK."
+itemname2 = "LBACP."
+itemname3 = "LBAAD."
+
 @app.route('/api/TitleData', methods=['GET', 'POST'])
 def title_data():
+    today = datetime.utcnow().date()
+    startweek = today - timedelta(days=today.weekday())
+    endweek = startweek + timedelta(days=6)
+
+    data = {
+        "TOTD": [
+                {
+                    "PedestalID": "CosmeticStand1",
+                    "ItemName": itemname1,
+                    "StartTimeUTC": startweek.strftime("%Y-%m-%dT00:00:00Z"),
+                    "EndTimeUTC": endweek.strftime("%Y-%m-%dT23:59:59Z")
+                },
+                {
+                    "PedestalID": "CosmeticStand2",
+                    "ItemName": itemname2,
+                    "StartTimeUTC": startweek.strftime("%Y-%m-%dT00:00:00Z"),
+                    "EndTimeUTC": endweek.strftime("%Y-%m-%dT23:59:59Z")
+                },
+                {
+                    "PedestalID": "CosmeticStand2",
+                    "ItemName": itemname2,
+                    "StartTimeUTC": startweek.strftime("%Y-%m-%dT00:00:00Z"),
+                    "EndTimeUTC": endweek.strftime("%Y-%m-%dT23:59:59Z")
+                }
+            ]
+        }
+    
     titledatas = requests.post(
         url=f"https://{settings.TitleId}.playfabapi.com/Server/GetTitleData",
         headers=settings.auth_headers(),
     )
 
     if titledatas.status_code == 200:
-        return jsonify(titledatas.json()), 200
+        return jsonify(titledatas.json(), data), 200
 
 
 @app.route('/api/FetchPoll', methods=['GET', 'POST'])
 def fetch_poll():
     return jsonify(pollers), 200
+
+
 
 
 @app.route('/api/Vote', methods=['GET', 'POST'])
