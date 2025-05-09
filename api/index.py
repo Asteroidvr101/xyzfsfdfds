@@ -1,7 +1,9 @@
 from flask import Flask, request, jsonify
 import requests
 
+
 class GameSettings:
+
     def __init__(self):
         self.TitleId: str = "7AF94"
         self.SecretKey: str = "GBIPB74594RF9UDYHIAKASEJ1WG66KWWF4FAPKJK1WYZCC94S7"
@@ -12,13 +14,14 @@ class GameSettings:
             "X-SecretKey": settings.SecretKey
         }
 
+
 settings = GameSettings()
 app = Flask(__name__)
+
 
 @app.route('/')
 def index():
     return 'I Think The Backend Is Working'
-
 
 
 @app.route('/api/PlayFabAuthentication', methods=['POST', 'GET'])
@@ -26,7 +29,8 @@ def playfab_authentication():
     data = request.get_json()
     oculusid = data.get('OculusId')
     requestlogin = requests.post(
-        url=f"https://{settings.TitleId}.playfabapi.com/Server/LoginWithCustomID",
+        url=
+        f"https://{settings.TitleId}.playfabapi.com/Server/LoginWithCustomID",
         headers=settings.auth_headers(),
         json={
             "CustomId": "OCULUS" + oculusid,
@@ -37,12 +41,17 @@ def playfab_authentication():
     if requestlogin.status_code == 200:
         skibdata = requestlogin.json()
         return jsonify({
-            "PlayFabId": skibdata["data"]["PlayFabId"],
-            "SessionTicket": skibdata["data"]["SessionTicket"],
-            "EntityToken": skibdata["data"]["EntityToken"]["EntityToken"],
-            "EntityId": skibdata["data"]["EntityToken"]["Entity"]["Id"],
-            "EntityType": skibdata["data"]["EntityToken"]["Entity"]["Type"],
-        }), 200
+            "PlayFabId":
+            skibdata["data"]["PlayFabId"],
+            "SessionTicket":
+            skibdata["data"]["SessionTicket"],
+            "EntityToken":
+            skibdata["data"]["EntityToken"]["EntityToken"],
+            "EntityId":
+            skibdata["data"]["EntityToken"]["Entity"]["Id"],
+            "EntityType":
+            skibdata["data"]["EntityToken"]["Entity"]["Type"],
+        }),
     else:
         if requestlogin.status_code == 403:
             banshit = requestlogin.json()
@@ -51,16 +60,20 @@ def playfab_authentication():
                 bandetails = banshit.get("errorDetails", {})
                 banexpirekey = next(iter(bandetails.keys()), None)
                 banexpirelist = bandetails.get(banexpirekey, [])
-                banexpiretime = banexpirelist[0] if len(banexpirelist) > 0 else "Infinite"
-                print (banshit)
+                banexpiretime = banexpirelist[0] if len(
+                    banexpirelist) > 0 else "Infinite"
+                print(banshit)
                 return jsonify({
-                    "BanMessage": banmessage,
+                    "BanMessage": banexpirekey,
                     "BanExpirationTime": banexpiretime
                 }), 403
             else:
-                error = banshit.get("errorMessage", "An unknown error occurred.")
-                return jsonify({"error": "PlayFabError", "Message": error}), 403
-                    
+                error = banshit.get("errorMessage",
+                                    "An unknown error occurred.")
+                return jsonify({
+                    "error": "PlayFabError",
+                    "Message": error
+                }), 403
 
 
 @app.route('/api/CachePlayFabId', methods=['POST', 'GET'])
@@ -68,6 +81,7 @@ def cache_playfab_id():
     data = request.get_json()
     playfabid = data.get('PlayFabId')
     return playfabid, 200
+
 
 @app.route('/api/TitleData', methods=['POST', 'GET'])
 def title_data():
