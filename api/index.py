@@ -29,17 +29,6 @@ def index():
 def playfab_auth():
     data = request.get_json()
     oculusid = data.get("OculusId")
-    customid = data.get("CustomId")
-    if 'UnityPlayer' not in request.headers.get('User-Agent', ''):
-        return jsonify({
-            "BanMessage": "Invalid User-Agent",
-            "BanExpirationTime": "Infinite"
-        }), 403
-    if customid.startswith("OCULUS"):
-        return jsonify({
-            "BanMessage": "Invalid CustomId",
-            "BanExpirationTime": "Infinite"
-        }), 403
     requestlog = requests.post(
         url=
         f"https://{settings.TitleId}.playfabapi.com/Server/LoginWithCustomID",
@@ -51,30 +40,25 @@ def playfab_auth():
     if requestlog.status_code == 200:
         playerdata = requestlog.json()
         return jsonify({
-            "PlayFabId":
-            playerdata["data"]["PlayFabId"],
-            "SessionTicket":
-            playerdata["data"]["SessionTicket"],
-            "EntityToken":
-            playerdata["data"]["EntityToken"]["EntityToken"],
-            "EntityId":
-            playerdata["data"]["EntityToken"]["Entity"]["Id"],
-            "EntityType":
-            playerdata["data"]["EntityToken"]["Entity"]["Type"],
+            "PlayFabId": playerdata["data"]["PlayFabId"],
+            "SessionTicket": playerdata["data"]["SessionTicket"],
+            "EntityToken": playerdata["data"]["EntityToken"]["EntityToken"],
+            "EntityId": playerdata["data"]["EntityToken"]["Entity"]["Id"],
+            "EntityType": playerdata["data"]["EntityToken"]["Entity"]["Type"],
         }), 200
     else:
         if requestlog.status_code == 403:
-            banshit = requestlog.json()
-            if banshit.get('errorCode') == 1002:
-                banmessage = banshit.get('errorMessage', 'No Message Found.')
-                bandetails = banshit.get('errorDetails', {})
-                banexpkey = next(iter(bandetails.keys()), None)
-                banexplist = bandetails.get(banexpkey, [])
-                banexpirationtime = banexplist[0] if len(banexplist) else "Infinite"
-                print (banshit)
+            ban_info = requestlog.json()
+            if ban_info.get('errorCode') == 1002:
+                ban_message = ban_info.get('errorMessage', "No ban message provided.")
+                ban_details = ban_info.get('errorDetails', {})
+                ban_expiration_key = next(iter(ban_details.keys()), None)
+                ban_expiration_list = ban_details.get(ban_expiration_key, [])
+                ban_expiration = ban_expiration_list[0] if len(ban_expiration_list) > 0 else "No expiration date provided."
+                print(ban_info)
                 return jsonify({
-                    "BanMessage": banexpkey,
-                    "BanExpirationTime": banexpirationtime
+                    'BanMessage': ban_expiration_key,
+                    'BanExpirationTime': ban_expiration
                 }), 403
 
 
