@@ -116,8 +116,8 @@ def title_data():
                 }
             ]
         }
-    
-        return jsonify(data), 200
+
+    return jsonify(data), 200
 
 
 @app.route('/api/FetchPoll', methods=['GET', 'POST'])
@@ -140,7 +140,7 @@ def vote():
             return "Poll Not Found", 404
     if optionindex < 0 or optionindex >= len(sigma["voteOptions"]):
             return 'Invalid Vote Option', 400
-        
+
 
     embed = {
         "embeds": [
