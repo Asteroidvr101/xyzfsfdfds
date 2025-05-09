@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 import requests
+from werkzeug.datastructures import headers
 
 
 class GameSettings:
@@ -23,21 +24,12 @@ app = Flask(__name__)
 def index():
     return 'I Think The Backend Is Working'
 
-@app.route('/api/PlayFabAuthentication', methods=['GET', 'POST'])
+
+@app.route('/api/PlayFabAuthentication', methods=['POST', 'GET'])
 def playfab_auth():
     data = request.get_json()
     oculusid = data.get("OculusId")
     customid = data.get("CustomId")
-    if 'UnityPlayer' not in request.headers.get('User-Agent', ''):
-        return jsonify({
-            "BanMessage": "Invalid User-Agent",
-            "BanExpirationTime": "Infinite"
-        }), 403
-    if customid.startsWith("OCULUS"):
-        return jsonify({
-            "BanMessage": "Invalid CustomId",
-            "BanExpirationTime": "Infinite"
-        }), 403
     requestlog = requests.post(
         url=f"https://{settings.TitleId}.playfabapi.com/Server/LoginWithCustomID",
         headers=settings.auth_headers(),
@@ -46,6 +38,7 @@ def playfab_auth():
             "CreateAccount": True
         }
     )
+    
 
     if requestlog.status_code == 200:
         playerdata = requestlog.json()
