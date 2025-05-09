@@ -49,8 +49,8 @@ def playfab_authentication():
             if bannywanny["errorCode"] == 1002:
                 banmessage = bannywanny["errorMessage", "No Ban Message Found."]
                 bandetails = bannywanny["errorDetails", []]
-                banexpirekey = bandetails(next(iter(bandetails.keys())), None)
-                banexpirelist = bannywanny.get(banexpirekey(), [])
+                banexpirekey = next(iter(bandetails.keys()), None)
+                banexpirelist = bannywanny.get(banexpirekey, [])
                 banexpiretime = {
                     banexpirelist[0]
                     if len(banexpirelist) > 0
