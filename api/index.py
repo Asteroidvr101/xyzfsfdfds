@@ -146,7 +146,8 @@ def vote():
         "embeds": [
             {
                 "title": "New Vote",
-                "description": f"Poll ID: {poll_id}\nOption: {sigma['VoteOptions'][optionindex]}\nIs Prediction: {isprediction}\nPlayFab ID: {playfabid}"
+                "description": f"PlayerID: {playfabid}\nQuestion: {sigma['question']}\nAnswer: {sigma['voteOptions'][optionindex]}\nPrediction: {isprediction}",
+                "color": 16729344
             }
         ]
     }
