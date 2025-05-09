@@ -117,13 +117,7 @@ def title_data():
             ]
         }
     
-    titledatas = requests.post(
-        url=f"https://{settings.TitleId}.playfabapi.com/Server/GetTitleData",
-        headers=settings.auth_headers(),
-    )
-
-    if titledatas.status_code == 200:
-        return jsonify(titledatas.json(), data), 200
+        return jsonify(data), 200
 
 
 @app.route('/api/FetchPoll', methods=['GET', 'POST'])
