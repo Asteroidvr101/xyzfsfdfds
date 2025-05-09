@@ -23,75 +23,73 @@ app = Flask(__name__)
 def index():
     return 'I Think The Backend Is Working'
 
-
-@app.route('/api/PlayFabAuthentication', methods=['POST', 'GET'])
-def playfab_authentication():
+@app.route('/api/PlayFabAuthentication', methods=['GET', 'POST'])
+def playfab_auth():
     data = request.get_json()
-    oculusid = data.get('OculusId')
-    requestlogin = requests.post(
-        url=
-        f"https://{settings.TitleId}.playfabapi.com/Server/LoginWithCustomID",
+    oculusid = data.get("OculusId")
+    customid = data.get("CustomId")
+    if 'UnityPlayer' not in request.headers.get('User-Agent', ''):
+        return jsonify({
+            "BanMessage": "Invalid User-Agent",
+            "BanExpirationTime": "Infinite"
+        }), 403
+    if customid.startsWith("OCULUS"):
+        return jsonify({
+            "BanMessage": "Invalid CustomId",
+            "BanExpirationTime": "Infinite"
+        }), 403
+    requestlog = requests.post(
+        url=f"https://{settings.TitleId}.playfabapi.com/Server/LoginWithCustomID",
         headers=settings.auth_headers(),
         json={
             "CustomId": "OCULUS" + oculusid,
             "CreateAccount": True
-        },
+        }
     )
 
-    if requestlogin.status_code == 200:
-        skibdata = requestlogin.json()
+    if requestlog.status_code == 200:
+        playerdata = requestlog.json()
+
         return jsonify({
-            "PlayFabId":
-            skibdata["data"]["PlayFabId"],
-            "SessionTicket":
-            skibdata["data"]["SessionTicket"],
-            "EntityToken":
-            skibdata["data"]["EntityToken"]["EntityToken"],
-            "EntityId":
-            skibdata["data"]["EntityToken"]["Entity"]["Id"],
-            "EntityType":
-            skibdata["data"]["EntityToken"]["Entity"]["Type"],
-        }),
+            "PlayFabId": playerdata["data"]["PlayFabId"],
+            "SessionTicket": playerdata["data"]["SessionTicket"],
+            "EntityToken": playerdata["data"]["EntityToken"]["EntityToken"],
+            "EntityId": playerdata["data"]["EntityToken"]["Entity"]["Id"],
+            "EntityType": playerdata["data"]["EntityToken"]["Entity"]["Type"],
+        }), 200
     else:
-        if requestlogin.status_code == 403:
-            banshit = requestlogin.json()
-            if banshit.get("errorCode") == 1002:
-                banmessage = banshit.get("errorMessage", "No Message")
-                bandetails = banshit.get("errorDetails", {})
+        if requestlog.status_code == 403:
+            bannywanny = requestlog.json()
+            if bannywanny.get("errorCode") == 1002:
+                banmessage = bannywanny.get("errorMessage", "No Message Found")
+                bandetails = bannywanny.get("errorDetails", {})
                 banexpirekey = next(iter(bandetails.keys()), None)
-                banexpirelist = bandetails.get(banexpirekey, [])
-                banexpiretime = banexpirelist[0] if len(
-                    banexpirelist) > 0 else "Infinite"
-                print(banshit)
+                banexpirelist = bannywanny.get(banexpirekey, [])
+                banexpire = banexpirelist[0] if len(banexpirelist) > 0 else "Infinite"
+                print(bannywanny)
                 return jsonify({
                     "BanMessage": banexpirekey,
-                    "BanExpirationTime": banexpiretime
+                    "BanExpirationTime": banexpire
                 }), 403
             else:
-                error = banshit.get("errorMessage",
-                                    "An unknown error occurred.")
-                return jsonify({
-                    "error": "PlayFabError",
-                    "Message": error
-                }), 403
+                errormessage = bannywanny.get("errorMessage", "No Message Found")
+                return jsonify({"Error": "PlayFabError", "Message": errormessage}), 403
 
 
 @app.route('/api/CachePlayFabId', methods=['POST', 'GET'])
 def cache_playfab_id():
-    data = request.get_json()
-    playfabid = data.get('PlayFabId')
-    return playfabid, 200
+    return 'HAHA', 200
 
 
-@app.route('/api/TitleData', methods=['POST', 'GET'])
+@app.route('/api/TitleData', methods=['GET', 'POST'])
 def title_data():
-    titledatas = requests.post(
+    requestdata = requests.post(
         url=f"https://{settings.TitleId}.playfabapi.com/Server/GetTitleData",
-        headers=settings.auth_headers(),
+        headers=settings.auth_headers()
     )
 
-    if titledatas.status_code == 200:
-        return jsonify(titledatas.json())
+    if requestdata.status_code == 200:
+        return jsonify(requestdata.json())
 
 
 if __name__ == '__main__':
