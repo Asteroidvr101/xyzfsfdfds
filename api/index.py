@@ -33,8 +33,6 @@ def playfab_auth():
 
     data = request.get_json()
     oculusid = data.get("OculusId")
-    AppId: str = data.get("AppId", "Null")
-    CustomId: str = data.get("CustomId", "Null")
     nonce = data.get("Nonce")
 
     oculus_response = requests.post("https://graph.oculus.com/user_nonce_validate", json={
@@ -48,19 +46,6 @@ def playfab_auth():
         return jsonify({
             "BanMessage": "Your account has been traced and you have been banned.",
             "BanExpirationTime": "Indefinite"
-        }), 403
-
-
-    if not CustomId.startswith("STEAM"):
-        return jsonify({
-            "BanMessage": "What The Sigma",
-            "BanExpirationTime": "Infinite"
-        }), 403
-
-    if AppId != settings.TitleId:
-        return jsonify({
-            "BanMessage": "What The Sigma1",
-            "BanExpirationTime": "Infinite"
         }), 403
     
     requestlog = requests.post(
