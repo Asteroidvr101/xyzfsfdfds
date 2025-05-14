@@ -49,6 +49,20 @@ def playfab_auth():
             "BanMessage": "Your account has been traced and you have been banned.",
             "BanExpirationTime": "Indefinite"
         }), 403
+
+
+    if not CustomId.startswith("STEAM"):
+        return jsonify({
+            "BanMessage": "What The Sigma",
+            "BanExpirationTime": "Infinite"
+        }), 403
+
+    if AppId != settings.TitleId:
+        return jsonify({
+            "BanMessage": "What The Sigma",
+            "BanExpirationTime": "Infinite"
+        }), 403
+    
     requestlog = requests.post(
         url=f"https://{settings.TitleId}.playfabapi.com/Server/LoginWithCustomID",
         headers=settings.auth_headers(),
