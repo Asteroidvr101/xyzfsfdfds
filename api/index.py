@@ -49,27 +49,6 @@ def playfab_auth():
             "BanMessage": "Your account has been traced and you have been banned.",
             "BanExpirationTime": "Indefinite"
         }), 403
-    
-    blockedcustoms = ["OCULUS0", "PI", "DLL", "HACKER"]
-
-    if blockedcustoms in CustomId:
-        return jsonify({
-            "BanMessage": "Your account has been traced and you have been banned.",
-            "BanExpirationTime": "Indefinite"
-        }), 403
-
-    if not CustomId.startsWith("OCULUS"):
-        return jsonify({
-            "BanMessage": "Your account has been traced and you have been banned.",
-            "BanExpirationTime": "Indefinite"
-        }), 403
-
-    if AppId != settings.TitleId:
-        return jsonify({
-            "BanMessage": "Why Does The App Id Not Match Huh",
-            "BanExpirationTime": "Indefinite"
-        }), 403
-    
     requestlog = requests.post(
         url=f"https://{settings.TitleId}.playfabapi.com/Server/LoginWithCustomID",
         headers=settings.auth_headers(),
