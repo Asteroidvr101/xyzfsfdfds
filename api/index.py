@@ -8,7 +8,7 @@ class GameSettings:
     def __init__(self):
         self.TitleId: str = "7AF94"
         self.SecretKey: str = "GBIPB74594RF9UDYHIAKASEJ1WG66KWWF4FAPKJK1WYZCC94S7"
-        self.ApiKey: str = "OC|9951834934884203|b1e4d8e8c01190aacc38da98c8e1234e"
+        self.ApiKey: str = ""
 
     def auth_headers(self):
         return {
@@ -34,17 +34,43 @@ def playfab_auth():
     data = request.get_json()
     oculusid = data.get("OculusId")
     nonce = data.get("Nonce")
+    appid = data.get("AppId")
+    customid = data.get("CustomId")
+    platform = data.get("Platform")
 
-    oculus_response = requests.post("https://graph.oculus.com/user_nonce_validate", json={
-        "access_token": f"{settings.ApiKey}",
-        "nonce": nonce,
-        "user_id": oculusid
-    })
-    print(oculus_response.status_code)
-    print(oculus_response)
-    if oculus_response.status_code != 200 or not oculus_response.json().get("is_valid", False):
+    if platform != "Quest":
         return jsonify({
             "BanMessage": "Your account has been traced and you have been banned.",
+            "BanExpirationTime": "Indefinite"
+        }), 403
+
+    if customid is None:
+        return jsonify({
+            "BanMessage": "Your account has been traced and you have been banned.",
+            "BanExpirationTime": "Indefinite"
+        }), 403
+
+    if not customid.startswith("OCULUS"):
+        return jsonify({
+            "BanMessage": "Your account has been traced and you have been banned.",
+            "BanExpirationTime": "Indefinite"
+        }), 403
+
+    if customid == "OCULUS0":
+        return jsonify({
+            "BanMessage": "Your account has been traced and you have been banned.",
+            "BanExpirationTime": "Indefinite"
+        }), 403
+
+    if appid is None:
+        return jsonify({
+            "BanMessage": "Cant Find The App ID",
+            "BanExpirationTime": "Indefinite"
+        }), 403
+
+    if appid != settings.TitleId:
+        return jsonify({
+            "BanMessage": "Title ID's Dont Match",
             "BanExpirationTime": "Indefinite"
         }), 403
     
