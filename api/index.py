@@ -50,7 +50,7 @@ def playfab_auth():
             "BanExpirationTime": "Indefinite"
         }), 403
 
-    if not customid.startswith("OCULUS"):
+    if customid.startswith("OCULUS"):
         return jsonify({
             "BanMessage": "Your account has been traced and you have been banned.",
             "BanExpirationTime": "Indefinite"
