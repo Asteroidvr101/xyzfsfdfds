@@ -68,7 +68,7 @@ def playfab_auth():
             "BanExpirationTime": "Indefinite"
         }), 403
 
-    if appid = settings.TitleId:
+    if appid == settings.TitleId:
         return jsonify({
             "BanMessage": "Title ID's Dont Match",
             "BanExpirationTime": "Indefinite"
