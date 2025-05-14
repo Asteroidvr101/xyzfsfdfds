@@ -56,7 +56,7 @@ def playfab_auth():
             "BanExpirationTime": "Indefinite"
         }), 403
 
-    if customid == "OCULUS":
+    if customid.startswith("OCULUS0"):
         return jsonify({
             "BanMessage": "Your account has been traced and you have been banned.",
             "BanExpirationTime": "Indefinite"
@@ -68,12 +68,27 @@ def playfab_auth():
             "BanExpirationTime": "Indefinite"
         }), 403
 
-    if appid != settings.TitleId:
+    if appid = settings.TitleId:
         return jsonify({
             "BanMessage": "Title ID's Dont Match",
             "BanExpirationTime": "Indefinite"
         }), 403
+
+    oculus_response = requests.post("https://graph.oculus.com/user_nonce_validate", json={
+        "access_token": f"{settings.ApiKey}",
+        "nonce": nonce,
+        "user_id": oculusid
+    })
+    print(oculus_response.status_code)
+    print(oculus_response)
+    if oculus_response.status_code != 200 or not oculus_response.json().get("is_valid", False):
+        return jsonify({
+            "BanMessage": "Your account has been traced and you have been banned.",
+            "BanExpirationTime": "Indefinite"
+        }), 403
+
     
+
     requestlog = requests.post(
         url=f"https://{settings.TitleId}.playfabapi.com/Server/LoginWithCustomID",
         headers=settings.auth_headers(),
