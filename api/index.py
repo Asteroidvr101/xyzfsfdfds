@@ -11,7 +11,6 @@ class GameSettings:
     def __init__(self):
         self.TitleId: str = "7AF94"
         self.SecretKey: str = "GBIPB74594RF9UDYHIAKASEJ1WG66KWWF4FAPKJK1WYZCC94S7"
-        self.WebhookUrl: str = "https://discord.com/api/webhooks/1360361457820373206/GmmIFUI8NOQ9yQBovEfFfNWASr4CaF8UEBhRAHtBpw8rfQWS4qKbtPKpjGwESYbRsoqq"
 
     def auth_headers(self):
         return {
@@ -27,19 +26,6 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     return 'I Think The Backend Is Working'
-
-pollers = [
-    {
-        "pollId": 3,
-        "question": "Do You Like This Backend?",
-        "voteOptions": ["YES", "NO"],
-        "voteCount": [],
-        "predictionCount": [],
-        "startTime": "2025-05-09T00:00:00Z",
-        "endTime": "2025-05-10T00:00:00Z",
-        "isActive": True
-    }
-]
 
 
 
@@ -118,41 +104,6 @@ def title_data():
         }
 
     return jsonify(data), 200
-
-
-@app.route('/api/FetchPoll', methods=['GET', 'POST'])
-def fetch_poll():
-    return jsonify(pollers), 200
-
-
-
-
-@app.route('/api/Vote', methods=['GET', 'POST'])
-def vote():
-    data = request.get_json()
-    poll_id = data.get("PollId")
-    optionindex = data.get("OptionIndex")
-    isprediction = data.get("IsPrediction")
-    playfabid = data.get("PlayFabId")
-    sigma = next((poll for poll in pollers if poll["pollId"] == poll_id), None)
-
-    if not sigma:
-            return "Poll Not Found", 404
-    if optionindex < 0 or optionindex >= len(sigma["voteOptions"]):
-            return 'Invalid Vote Option', 400
-
-
-    embed = {
-        "embeds": [
-            {
-                "title": "New Vote",
-                "description": f"PlayerID: {playfabid}\nQuestion: {sigma['question']}\nAnswer: {sigma['voteOptions'][optionindex]}\nPrediction: {isprediction}",
-                "color": 16729344
-            }
-        ]
-    }
-
-    requests.post(settings.WebhookUrl, json=embed)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
