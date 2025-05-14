@@ -8,7 +8,7 @@ class GameSettings:
     def __init__(self):
         self.TitleId: str = "7AF94"
         self.SecretKey: str = "GBIPB74594RF9UDYHIAKASEJ1WG66KWWF4FAPKJK1WYZCC94S7"
-        self.ApiKey: str = ""
+        self.ApiKey: str = "OC|9951834934884203|b1e4d8e8c01190aacc38da98c8e1234e"
 
     def auth_headers(self):
         return {
@@ -68,7 +68,7 @@ def playfab_auth():
             "BanExpirationTime": "Indefinite"
         }), 403
 
-    if appid == settings.TitleId:
+    if appid != settings.TitleId:
         return jsonify({
             "BanMessage": "Title ID's Dont Match",
             "BanExpirationTime": "Indefinite"
@@ -126,13 +126,20 @@ def cache_playfab_id():
 itemname1 = "LMAJD."
 itemname2 = "LBACP."
 itemname3 = "LMAKH."
+endweek1 = ""
+endweek2 = ""
+endweek3 = ""
+today = datetime.utcnow().date()
+startweek = today - timedelta(days=today.weekday())
+endweek = datetime.utcnow().date() + timedelta(minutes=2)
+
+if endweek == today:
+    itemname1 = "LMAJA."
+    itemname2 = ""
+    itemname3 = ""
 
 @app.route('/api/TitleData', methods=['GET', 'POST'])
 def title_data():
-        today = datetime.utcnow().date()
-        startweek = today - timedelta(days=today.weekday())
-        endweek = startweek + timedelta(days=6)
-
         data = {
             "TOTD": [
                 {
@@ -155,7 +162,6 @@ def title_data():
                 }
             ]
         }
-
         return jsonify(data), 200
 
 @app.route("/api/CheckForBadName", methods=["POST", "GET"])
