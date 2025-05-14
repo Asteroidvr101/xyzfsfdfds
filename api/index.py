@@ -131,7 +131,7 @@ endweek2 = ""
 endweek3 = ""
 today = datetime.utcnow().date()
 startweek = today - timedelta(days=today.weekday())
-endweek = datetime.utcnow().date() + timedelta(minutes=2)
+endweek = datetime.utcnow().date() + timedelta(minutes=5)
 
 if endweek == today:
     itemname1 = "LMAJA."
