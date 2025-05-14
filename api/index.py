@@ -8,7 +8,7 @@ class GameSettings:
     def __init__(self):
         self.TitleId: str = "7AF94"
         self.SecretKey: str = "GBIPB74594RF9UDYHIAKASEJ1WG66KWWF4FAPKJK1WYZCC94S7"
-        self.ApiKey: str = ""
+        self.ApiKey: str = "OC|9951834934884203|b1e4d8e8c01190aacc38da98c8e1234e"
 
     def auth_headers(self):
         return {
