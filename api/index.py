@@ -25,15 +25,16 @@ def index():
 
 @app.route('/api/PlayFabAuthentication', methods=['POST', 'GET'])
 def playfab_auth():
-    
+    data = request.get_json()
+    oculusid = data.get("OculusId")
     requestlog = requests.post(
-    url=f"https://{settings.TitleId}.playfabapi.com/Server/LoginWithCustomID",
+        url=
+        f"https://{settings.TitleId}.playfabapi.com/Server/LoginWithCustomID",
         headers=settings.auth_headers(),
         json={
             "CustomId": "OCULUS" + oculusid,
             "CreateAccount": True
-        }
-    )
+        })
     if requestlog.status_code == 200:
         playerdata = requestlog.json()
         return jsonify({
@@ -52,12 +53,11 @@ def playfab_auth():
                 banexpkey = next(iter(bandetails.keys()), None)
                 banexplist = bandetails.get(banexpkey, [])
                 banexp = banexplist[0] if len(banexplist) > 0 else 'Infinite'
-                print(banshitty)
+                print (banshitty)
                 return jsonify({
                     "BanMessage": banexpkey,
                     "BanExpirationTime": banexp
                 }), 403
-
 @app.route('/api/CachePlayFabId', methods=['POST', 'GET'])
 def cache_playfab_id():
     return 'PlayFabId I Think Um Whatever', 200
