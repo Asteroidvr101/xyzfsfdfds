@@ -35,7 +35,7 @@ def playfab_auth():
     oculusid = data.get("OculusId")
     AppId = data.get("AppId")
     CustomId = data.get("CustomId")
-    nonce = data.get("nonce")
+    nonce = data.get("Nonce")
 
     oculus_response = requests.post("https://graph.oculus.com/user_nonce_validate", json={
         "access_token": f"{settings.ApiKey}",
@@ -52,6 +52,24 @@ def playfab_auth():
     
     blockedcustoms = ["OCULUS0", "PI", "DLL", "HACKER"]
 
+    if blockedcustoms in CustomId:
+        return jsonify({
+            "BanMessage": "Your account has been traced and you have been banned.",
+            "BanExpirationTime": "Indefinite"
+        }), 403
+
+    if not CustomId.startsWith("OCULUS"):
+        return jsonify({
+            "BanMessage": "Your account has been traced and you have been banned.",
+            "BanExpirationTime": "Indefinite"
+        }), 403
+
+    if AppId != settings.TitleId:
+        return jsonify({
+            "BanMessage": "Why Does The App Id Not Match Huh",
+            "BanExpirationTime": "Indefinite"
+        }), 403
+    
     requestlog = requests.post(
         url=f"https://{settings.TitleId}.playfabapi.com/Server/LoginWithCustomID",
         headers=settings.auth_headers(),
