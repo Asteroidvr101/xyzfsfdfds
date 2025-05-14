@@ -26,42 +26,6 @@ def index():
 @app.route('/api/PlayFabAuthentication', methods=['POST', 'GET'])
 def playfab_auth():
     
-    if 'UnityPlayer' not in request.headers['User-Agent']:
-        return jsonify({
-            "BanMessage": "Um What The Fuck",
-            "BanExpirationTime": "Infinite"
-        }), 403
-
-    data1 = request.get_json()
-    oculus_id = data1.get("OculusId")
-    nonce = data1.get("Nonce")
-
-    AppId = data1["AppId"]
-    CustomId = data1["CustomId"]
-
-    blockedcustoms = ["OCULUS0", "PI", "DLL", "HACKER"]
-
-    if blockedcustoms in CustomId:
-        return jsonify({
-            "BanMessage": "Your account has been traced and you have been banned.",
-            "BanExpirationTime": "Indefinite"
-        }), 403
-
-    if not CustomId.startsWith("OCULUS"):
-        return jsonify({
-            "BanMessage": "Your account has been traced and you have been banned.",
-            "BanExpirationTime": "Indefinite"
-        }), 403
-
-    if AppId != settings.TitleId:
-        return jsonify({
-            "BanMessage": "Why Does The App Id Not Match Huh",
-            "BanExpirationTime": "Indefinite"
-        }), 403
-    
-    data = request.get_json()
-    oculusid = data.get("OculusId")
-    
     requestlog = requests.post(
     url=f"https://{settings.TitleId}.playfabapi.com/Server/LoginWithCustomID",
         headers=settings.auth_headers(),
