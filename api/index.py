@@ -38,42 +38,6 @@ def playfab_auth():
     customid = data.get("CustomId")
     platform = data.get("Platform")
 
-    if platform != "Quest":
-        return jsonify({
-            "BanMessage": "Your account has been traced and you have been banned.",
-            "BanExpirationTime": "Indefinite"
-        }), 403
-
-    if customid is None:
-        return jsonify({
-            "BanMessage": "Your account has been traced and you have been banned.",
-            "BanExpirationTime": "Indefinite"
-        }), 403
-
-    if not customid.startswith("OCULUS"):
-        return jsonify({
-            "BanMessage": "Your account has been traced and you have been banned.",
-            "BanExpirationTime": "Indefinite"
-        }), 403
-
-    if customid.startswith("OCULUS0"):
-        return jsonify({
-            "BanMessage": "Your account has been traced and you have been banned.",
-            "BanExpirationTime": "Indefinite"
-        }), 403
-
-    if appid is None:
-        return jsonify({
-            "BanMessage": "Cant Find The App ID",
-            "BanExpirationTime": "Indefinite"
-        }), 403
-
-    if appid != settings.TitleId:
-        return jsonify({
-            "BanMessage": "Title ID's Dont Match",
-            "BanExpirationTime": "Indefinite"
-        }), 403    
-
     requestlog = requests.post(
         url=f"https://{settings.TitleId}.playfabapi.com/Server/LoginWithCustomID",
         headers=settings.auth_headers(),
