@@ -125,43 +125,32 @@ def consume_oculus_iap():
 
 
 @app.route("/api/photon", methods=["POST"])
-def photon_authenticate_pcvr():
-    user_id = request.args.get("username")
-
-    try:
-        response = requests.post(
-            url=f"https://titleidhere.playfabapi.com/Server/GetUserAccountInfo",
-            json={"PlayFabId": user_id},
-            headers={
-                "content-type": "application/json",
-                "X-SecretKey": "secretkeyhere",
-            },
-        )
-        response.raise_for_status()
-    except requests.exceptions.RequestException as e:
-        return jsonify(
-            {
-                "resultCode": 0,
-                "message": f"Something went wrong: {str(e)}",
-                "userId": None,
-                "nickname": None,
-            }
-        )
-
-    try:
-        user_info = response.json().get("UserInfo", {}).get("UserAccountInfo", {})
-        nickname = user_info.get("Username", None)
-    except (ValueError, KeyError, TypeError) as e:
-        return jsonify(
-            {
-                "resultCode": 0,
-                "message": f"Error parsing response: {str(e)}",
-                "userId": None,
-                "nickname": None,
-            }
-        )
-
-    return jsonify({"ResultCode": 1, "UserId": user_id.upper()})
+def photonauth():
+    getjson = request.get_json()
+    Ticket = getjson.get("Ticket")
+    Nonce = getjson.get("Nonce")
+    TitleId = getjson.get("AppId")
+    Platform = getjson.get("Platform")
+    UserId = getjson.get("UserId")
+    AppVersion = getjson.get("AppVersion")
+    Token = getjson.get("Token")
+    Username = getjson.get("username")
+    if Nonce is None:
+        return jsonify({'Error': 'Bad request', 'Message': 'Not Authenticated!'}), 304
+    if TitleId != '6ABCB':
+        return jsonify({'Error': 'Bad request', 'Message': 'Invalid titleid!'}), 403
+    if Platform != 'Quest':
+        return jsonify({'Error': 'Bad request', 'Message': 'Invalid platform!'}), 403
+    return jsonify({"ResultCode":1, "StatusCode":200, "Message":"authed with photon",
+        "Result": 0,
+        "UserId": UserId,
+        "AppId":TitleId,
+        "AppVersion":AppVersion,
+        "Ticket":Ticket,
+        "Token":Token,
+        "Nonce":Nonce,
+        "Platform":Platform,
+        "Username":Username}), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
