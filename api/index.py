@@ -124,39 +124,72 @@ def consume_oculus_iap():
             return jsonify({"error": True})
 
 
-@app.route("/api/photon", methods=["POST"])
-def photon_authenticate():
-    user_id = request.args.get("username")
-    token = request.args.get("token")
+@app.route("/api/photon/authenticate", methods = ["POST","GET"])
+def photonauthenticaet():
+    if request.method.upper() == "GET":
+        userId = request.args.get("username")
+        token = request.args.get("token")
 
-    if user_id is None or len(user_id) != 16:
-        return jsonify({'resultCode': 2, 'message': 'Invalid token', 'userId': None, 'nickname': None})
-
-    if token is None:
-        return jsonify({'resultCode': 3, 'message': 'Failed to parse token from request', 'userId': None, 'nickname': None})
-
-    try:
-        response = requests.post(
-            url=f"https://{settings.TitleId}.playfabapi.com/Server/GetUserAccountInfo",
-            json={"PlayFabId": user_id},
-            headers=settings.get_auth_headers()
+        req = requests.post(
+            url = f"https://{settings.TitleId}.playfabapi.com/Server/GetUserAccountInfo",
+            json = {
+                "PlayFabId": userId
+            },
+            headers = settings.GetAuthHeaders()
         )
-        response.raise_for_status()
-    except requests.exceptions.RequestException as e:
-        return jsonify({'resultCode': 0, 'message': f"Something went wrong: {str(e)}", 'userId': None, 'nickname': None})
 
-    try:
-        user_info = response.json().get("UserInfo", {}).get("UserAccountInfo", {})
-        nickname = user_info.get("Username", None)
-    except (ValueError, KeyError, TypeError) as e:
-        return jsonify({'resultCode': 0, 'message': f"Error parsing response: {str(e)}", 'userId': None, 'nickname': None})
+        if req.status_code == 200:
+            nickName : str = req.json().get("UserInfo").get("UserAccountInfo").get("Username")
+            if nickName == "" or nickName is None:
+                nickName = None
 
-    return jsonify({
-        'resultCode': 1,
-        'message': f'Authenticated user {user_id.lower()} title {settings.TitleId.lower()}',
-        'userId': user_id.upper(),
-        'nickname': nickname
-    })
+            return jsonify({'resultCode': 1, 'message': f'Authenticated user {userId.lower()} title {settings.TitleId.lower()}', 'userId': f'{userId.upper()}', 'nickname': nickName})
+
+        else:
+            if len(userId) != 16 or userId is None:
+                return jsonify({'resultCode': 2, 'message': 'Invalid token', 'userId': None, 'nickname': None})
+            elif token is None:
+                return jsonify({'resultCode': 3, 'message': 'Failed to parse token from request', 'userId': None, 'nickname': None})
+            else:
+                return jsonify({'resultCode': 0, 'message': "Something went wrong", 'userId': None, 'nickname': None})
+    elif request.method.upper() == "POST":
+
+        authPostData : dict = request.get_json()
+
+        userId = request.args.get("username")
+        token = request.args.get("token")
+
+        req = requests.post(
+            url = f"https://{settings.TitleId}.playfabapi.com/Server/GetUserAccountInfo",
+            json = {
+                "PlayFabId": userId
+            },
+            headers = settings.GetAuthHeaders()
+        )
+
+        if req.status_code == 200:
+            nickName : str = req.json().get("UserInfo").get("UserAccountInfo").get("Username")
+            if nickName == "" or nickName is None:
+                nickName = None
+
+            return jsonify({'resultCode': 1, 'message': f'Authenticated user {userId.lower()} title {settings.TitleId.lower()}', 'userId': f'{userId.upper()}', 'nickname': nickName})
+
+        else:
+            if len(userId) != 16 or userId is None:
+                return jsonify({'resultCode': 2, 'message': 'Invalid token', 'userId': None, 'nickname': None})
+            elif token is None:
+                return jsonify({'resultCode': 3, 'message': 'Failed to parse token from request', 'userId': None, 'nickname': None})
+            else:
+                successJson : dict = {'resultCode': 0, 'message': "Something went wrong", 'userId': None, 'nickname': None}
+
+                for key, value in authPostData.items():
+                    successJson[key] = value
+
+                return jsonify(successJson)
+
+    else:
+        return jsonify({"Message": "Use a POST or GET Method instead of " + request.method.upper()})
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
