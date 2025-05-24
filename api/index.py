@@ -137,7 +137,7 @@ def photonauth():
     Username = getjson.get("username")
     if Nonce is None:
         return jsonify({'Error': 'Bad request', 'Message': 'Not Authenticated!'}), 304
-    if TitleId != '6ABCB':
+    if TitleId != '3E875':
         return jsonify({'Error': 'Bad request', 'Message': 'Invalid titleid!'}), 403
     if Platform != 'Quest':
         return jsonify({'Error': 'Bad request', 'Message': 'Invalid platform!'}), 403
