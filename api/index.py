@@ -96,7 +96,6 @@ def playfab_authentication():
             banexpkey = next(iter(bandetails.keys()), None)
             banexplist = bandetails.get(banexpkey, [])
             banexp = banexplist[0] if len(banexplist) > 0 else 'Infinite'
-            print (banshitty)
             return jsonify({
                 "BanMessage": banexpkey,
                 "BanExpirationTime": banexp
