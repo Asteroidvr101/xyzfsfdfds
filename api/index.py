@@ -56,18 +56,33 @@ def playfab_auth():
             }), 200
     else:
             if requestlog.status_code == 403:
-                banshitty = requestlog.json()
-                if banshitty.get('errorCode') == 1002:
-                    banmessage = banshitty.get('errorMessage', 'No Message Found')
-                    bandetails = banshitty.get('errorDetails', {})
-                    banexpkey = next(iter(bandetails.keys()), None)
-                    banexplist = bandetails.get(banexpkey, [])
-                    banexp = banexplist[0] if len(banexplist) > 0 else 'Infinite'
-                    print (banshitty)
-                    return jsonify({
-                        "BanMessage": banexpkey,
-                        "BanExpirationTime": banexp
-                    }), 403
+            ban_info = requestlog.json()
+            if ban_info.get('errorCode') == 1002:
+                ban_message = ban_info.get('errorMessage', "No ban message provided.")
+                ban_details = ban_info.get('errorDetails', {})
+                ban_expiration_key = next(iter(ban_details.keys()), None)
+                ban_expiration_list = ban_details.get(ban_expiration_key, [])
+                ban_expiration = ban_expiration_list[0] if len(ban_expiration_list) > 0 else "No expiration date provided."
+                print(ban_info)
+                return jsonify({
+                    'BanMessage': ban_expiration_key,
+                    'BanExpirationTime': ban_expiration
+                }), 403
+            else:
+                error_message = ban_info.get('errorMessage', 'Forbidden without ban information.')
+                return jsonify({
+                    'Error': 'PlayFab Error',
+                    'Message': error_message
+                }), 403
+        else:
+            error_info = requestlog.json()
+            error_message = error_info.get('errorMessage', 'An error occurred.')
+            return jsonify({
+                'Error': 'PlayFab Error',
+                'Message': error_message
+            }), requestlog.status_code
+
+
 @app.route('/api/CachePlayFabId', methods=['POST', 'GET'])
 def cache_playfab_id():
     return 'PlayFabId I Think Um Whatever', 200
