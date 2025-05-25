@@ -102,9 +102,10 @@ def playfab_authentication():
             )
 
             return jsonify({
-                "BanMessage": ban_details,
-                "BanExpirationTime": ban_expiration_list[0],
-            }), 403
+                "BanMessage": ban_expiration_key,
+                "BanExpirationTime": ban_expiration,
+            }), 403     
+
 
 @app.route("/api/TitleData", methods=["POST", "GET"])
 def titledata():
