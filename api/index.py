@@ -54,32 +54,23 @@ def playfab_auth():
                 "EntityId": playerdata["data"]["EntityToken"]["Entity"]["Id"],
                 "EntityType": playerdata["data"]["EntityToken"]["Entity"]["Type"],
             }), 200
-    elif requestlog.status_code == 403:
-        ban_info = requestlog.json()
-        if ban_info.get('errorCode') == 1002:
-            ban_message = ban_info.get('errorMessage', "No ban message provided.")
-            ban_details = ban_info.get('errorDetails', {})
+    else:
+         ban_info = login_req.json()
+        if ban_info.get("errorCode") == 1002:
+            ban_message = ban_info.get("errorMessage", "No ban message provided.")
+            ban_details = ban_info.get("errorDetails", {})
             ban_expiration_key = next(iter(ban_details.keys()), None)
             ban_expiration_list = ban_details.get(ban_expiration_key, [])
-            ban_expiration = ban_expiration_list[0] if len(ban_expiration_list) > 0 else "No expiration date provided."
-            print(ban_info)
+            ban_expiration = (
+                ban_expiration_list[0]
+                if len(ban_expiration_list) > 0
+                else "Indefinite"
+            )
+
             return jsonify({
-                'BanMessage': ban_expiration_key,
-                'BanExpirationTime': ban_expiration
+                "BanMessage": ban_expiration_key,
+                "BanExpirationTime": ban_expiration,
             }), 403
-        else:
-            error_message = ban_info.get('errorMessage', 'Forbidden without ban information.')
-            return jsonify({
-                'Error': 'PlayFab Error',
-                'Message': error_message
-            }), 403
-    else:
-        error_info = requestlog.json()
-        error_message = error_info.get('errorMessage', 'An error occurred.')
-        return jsonify({
-            'Error': 'PlayFab Error',
-            'Message': error_message
-        }), requestlog.status_code
 
 
 @app.route('/api/CachePlayFabId', methods=['POST', 'GET'])
