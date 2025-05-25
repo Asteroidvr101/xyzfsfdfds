@@ -55,7 +55,7 @@ def playfab_auth():
                 "EntityType": playerdata["data"]["EntityToken"]["Entity"]["Type"],
             }), 200
     else:
-         ban_info = login_req.json()
+        ban_info = login_req.json()
         if ban_info.get("errorCode") == 1002:
             ban_message = ban_info.get("errorMessage", "No ban message provided.")
             ban_details = ban_info.get("errorDetails", {})
