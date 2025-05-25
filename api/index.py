@@ -36,9 +36,15 @@ def playfab_auth():
     nonce = data.get("Nonce")
     appid = data.get("AppId")
     customid = data.get("CustomId")
-    platform = data.get("Platform")
+    platform = data.get("Platform")    
 
-    
+    requestlog = requests.post(
+        url=f"https://{settings.TitleId}.playfabapi.com/Server/LoginWithCustomID",
+        headers=settings.auth_headers(),
+        json={
+            "CustomId": "OCULUS" + oculusid,
+            "CreateAccount": True
+        })
     if requestlog.status_code == 200:
             playerdata = requestlog.json()
             return jsonify({
@@ -62,7 +68,6 @@ def playfab_auth():
                         "BanMessage": banexpkey,
                         "BanExpirationTime": banexp
                     }), 403
-
 @app.route('/api/CachePlayFabId', methods=['POST', 'GET'])
 def cache_playfab_id():
     return 'PlayFabId I Think Um Whatever', 200
