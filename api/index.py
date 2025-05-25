@@ -23,38 +23,57 @@ app = Flask(__name__)
 def index():
     return 'I Think The Backend Is Working'
 
-@app.route('/api/PlayFabAuthentication', methods=['POST', 'GET'])
-def playfab_auth():
-    if 'UnityPlayer' not in request.headers['User-Agent']:
+@app.route("/pla/api/PlayFabAuthentication", methods=["GET", "POST"])
+def playfab_authentication():
+    if 'UnityPlayer' not in request.headers.get('User-Agent', ''):
         return jsonify({
-            "BanMessage": "Um What The Fuck",
-            "BanExpirationTime": "Infinite"
+            "BanMessage": "Your account has been traced and you have been banned.",
+            "BanExpirationTime": "Indefinite"
+        }), 403
+        
+    what_the_BRUH = request.get_json()
+    oculus_id = what_the_BRUH.get('OculusId')
+    nonce = what_the_BRUH.get("Nonce")
+
+    oculus_response = requests.post("https://graph.oculus.com/user_nonce_validate", json={
+        "access_token": f"OC|9951834934884203|b1e4d8e8c01190aacc38da98c8e1234e",
+        "nonce": nonce,
+        "user_id": oculus_id
+    })
+    print(oculus_response.status_code)
+    print(oculus_response)
+    if oculus_response.status_code != 200 or not oculus_response.json().get("is_valid", False):
+        return jsonify({
+            "BanMessage": "Your account has been traced and you have been banned.",
+            "BanExpirationTime": "Indefinite"
         }), 403
 
-    data = request.get_json()
-    oculusid = data.get("OculusId")
-    nonce = data.get("Nonce")
-    appid = data.get("AppId")
-    customid = data.get("CustomId")
-    platform = data.get("Platform")    
-
-    requestlog = requests.post(
-        url=f"https://{settings.TitleId}.playfabapi.com/Server/LoginWithCustomID",
-        headers=settings.auth_headers(),
-        json={
-            "CustomId": "OCULUS" + oculusid,
+    login_req = requests.post(
+        url = f"https://{settings.TitleId}.playfabapi.com/Server/LoginWithServerCustomId",
+        json = {
+            "ServerCustomId": "OCULUS" + oculus_id,
             "CreateAccount": True
-        })
-    if requestlog.status_code == 200:
-            playerdata = requestlog.json()
-            return jsonify({
-                "PlayFabId": playerdata["data"]["PlayFabId"],
-                "SessionTicket": playerdata["data"]["SessionTicket"],
-                "EntityToken": playerdata["data"]["EntityToken"]["EntityToken"],
-                "EntityId": playerdata["data"]["EntityToken"]["Entity"]["Id"],
-                "EntityType": playerdata["data"]["EntityToken"]["Entity"]["Type"],
-            }), 200
-    else:
+        },
+        headers=settings.get_auth_headers()
+    )
+
+    if login_req.status_code == 200:
+        rjson = login_req.json()
+
+        session_ticket = rjson.get('data').get('SessionTicket')
+        entity_token = rjson.get('data').get('EntityToken').get('EntityToken')
+        playfab_id = rjson.get('data').get('PlayFabId')
+        entity_id = rjson.get('data').get('EntityToken').get('Entity').get('Id')
+        entity_type = rjson.get('data').get('EntityToken').get('Entity').get('Type')
+
+        return jsonify({
+            "SessionTicket": session_ticket,
+            "EntityToken": entity_token,
+            "PlayFabId": playfab_id,
+            "EntityId": entity_id,
+            "EntityType": entity_type
+        }), 200
+    else: 
         ban_info = login_req.json()
         if ban_info.get("errorCode") == 1002:
             ban_message = ban_info.get("errorMessage", "No ban message provided.")
@@ -70,7 +89,8 @@ def playfab_auth():
             return jsonify({
                 "BanMessage": ban_expiration_key,
                 "BanExpirationTime": ban_expiration,
-            }), 403
+            }), 403     
+
 
 
 @app.route('/api/CachePlayFabId', methods=['POST', 'GET'])
