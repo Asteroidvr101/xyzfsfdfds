@@ -89,17 +89,22 @@ def playfab_authentication():
             "EntityType": entity_type
         }), 200
     else: 
-        banshitty = requestlog.json()
-        if banshitty.get('errorCode') == 1002:
-            banmessage = banshitty.get('errorMessage', 'No Message Found')
-            bandetails = banshitty.get('errorDetails', {})
-            banexpkey = next(iter(bandetails.keys()), None)
-            banexplist = bandetails.get(banexpkey, [])
-            banexp = banexplist[0] if len(banexplist) > 0 else 'Infinite'
+        ban_info = login_req.json()
+        if ban_info.get("errorCode") == 1002:
+            ban_message = ban_info.get("errorMessage", "No ban message provided.")
+            ban_details = ban_info.get("errorDetails", {})
+            ban_expiration_key = next(iter(ban_details.keys()), None)
+            ban_expiration_list = ban_details.get(ban_expiration_key, [])
+            ban_expiration = (
+                ban_expiration_list[0]
+                if len(ban_expiration_list) > 0
+                else "Indefinite"
+            )
+
             return jsonify({
-                "BanMessage": banexpkey,
-                "BanExpirationTime": banexp
-            }), 403     
+                "BanMessage": ban_details,
+                "BanExpirationTime": ban_expiration_list[0],
+            }), 403
 
 @app.route("/api/TitleData", methods=["POST", "GET"])
 def titledata():
