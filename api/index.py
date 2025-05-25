@@ -119,6 +119,22 @@ def titledata():
     else:
         return jsonify({}), response.status_code
 
+@app.route("/api/CheckForBadName", methods=["POST"])
+def check_for_bad_name():
+    rjson = request.get_json().get("FunctionResult")
+    name = rjson.get("name").upper()
+
+    if name in ["KKK", "PENIS", "NIGG", "NEG", "NIGA", "MONKEYSLAVE", "SLAVE", "FAG", 
+        "NAGGI", "TRANNY", "QUEER", "KYS", "DICK", "PUSSY", "VAGINA", "BIGBLACKCOCK", 
+        "DILDO", "HITLER", "KKX", "XKK", "NIGA", "NIGE", "NIG", "NI6", "PORN", 
+        "JEW", "JAXX", "TTTPIG", "SEX", "COCK", "CUM", "FUCK", "PENIS", "DICK", 
+        "ELLIOT", "JMAN", "K9", "NIGGA", "TTTPIG", "NICKER", "NICKA", 
+        "REEL", "NII", "@here", "!", " ", "JMAN", "PPPTIG", "CLEANINGBOT", "JANITOR", "K9", 
+        "H4PKY", "MOSA", "NIGGER", "NIGGA", "IHATENIGGERS", "@everyone", "TTT"]:
+        return jsonify({"result": 2})
+    else:
+        return jsonify({"result": 0})
+
 @app.route("/api/CheckForBadName", methods=["POST", "GET"])
 def check_for_bad_name():
     rjson = request.get_json() 
