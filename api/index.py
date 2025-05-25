@@ -54,8 +54,7 @@ def playfab_auth():
                 "EntityId": playerdata["data"]["EntityToken"]["Entity"]["Id"],
                 "EntityType": playerdata["data"]["EntityToken"]["Entity"]["Type"],
             }), 200
-    else:
-        if requestlog.status_code == 403:
+    elif requestlog.status_code == 403:
         ban_info = requestlog.json()
         if ban_info.get('errorCode') == 1002:
             ban_message = ban_info.get('errorMessage', "No ban message provided.")
