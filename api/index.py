@@ -98,13 +98,14 @@ def playfab_authentication():
             ban_expiration = (
                 ban_expiration_list[0]
                 if len(ban_expiration_list) > 0
-                else "Infinite"
+                else "Indefinite"
             )
 
             return jsonify({
                 "BanMessage": ban_message,
                 "BanExpirationTime": ban_expiration,
             }), 403     
+
 
 
 @app.route("/api/TitleData", methods=["POST", "GET"])
