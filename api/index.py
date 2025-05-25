@@ -98,7 +98,7 @@ def playfab_authentication():
             ban_expiration = (
                 ban_expiration_list[0]
                 if len(ban_expiration_list) > 0
-                else "FIGURE IT OUT"
+                else "IDK"
             )
 
             return jsonify({
