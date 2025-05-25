@@ -102,8 +102,8 @@ def playfab_authentication():
             )
 
             return jsonify({
-                "BanMessage": ban_expiration_key,
-                "BanExpirationTime": ban_expiration,
+                "BanMessage": ban_message,
+                "BanExpirationTime": ban_expiration_list,
             }), 403     
 
 
