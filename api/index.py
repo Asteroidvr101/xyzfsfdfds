@@ -141,12 +141,6 @@ def photonauth():
     TaggedClient = AA.get("TaggedClient")
     OculusId = AA.get("OCULUSId")
     TitleId = AA.get("TitleId")
-    if Nonce is None:
-        return jsonify({'Error': 'Bad request', 'Message': 'Not Authenticated!'}), 304
-    if TitleId and TitleId != '3E875':
-        return jsonify({'Error': 'Bad request', 'Message': 'Invalid titleid!'}), 403
-    if Platform != 'Quest':
-        return jsonify({'Error': 'Bad request', 'Message': 'Invalid platform!'}), 403
     return jsonify({
         "ResultCode": 1,
         "StatusCode": 200,
