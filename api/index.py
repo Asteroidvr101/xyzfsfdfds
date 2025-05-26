@@ -108,6 +108,77 @@ def playfab_authentication():
 
 
 
+@app.route("/api/photon", methods=["POST"])
+def photonauth():
+    AA = request.get_json()
+    PlayFabId = AA.get("PlayFabId")
+    OrgScopedID = AA.get("OrgScopedId")
+    CustomId = AA.get("CustomID")
+    Platform = AA.get("Platform")
+    Nonce = AA.get("Nonce")
+    UserId = AA.get("UserId")
+    MasterPlayer = AA.get("Master")
+    GorillaTagger = AA.get("GorillaTagger")
+    CosmeticsInRoom = AA.get("CosmeticsInRoom")
+    SharedGroupData = AA.get("SharedGroupData")
+    UpdatePlayerCosmetics = AA.get("UpdatePlayerCosmetics")
+    MasterClient = AA.get("MasterClient")
+    ItemIds = AA.get("ItemIds")
+    PlayerCount = AA.get("PlayerCount")
+    CosmeticAuthenticationV2 = AA.get("CosmeticAuthenticationV2")
+    RPCS = AA.get("RPCS")
+    BroadcastMyRoomV2 = AA.get("BroadcastMyRoomV2")
+    DLCOwnerShipV2 = AA.get("DLCOwnerShipV2")
+    GorillaCorpCurrencyV1 = AA.get("GorillaCorpCurrencyV1")
+    DeadMonke = AA.get("DeadMonke")
+    GhostCounter = AA.get("GhostCounter")
+    DirtyCosmeticSpawnnerV2 = AA.get("DirtyCosmeticSpawnnerV2")
+    RoomJoined = AA.get("RoomJoined")
+    VirtualStump = AA.get("VirtualStump")
+    PlayerRoomCount = AA.get("PlayerRoomCount")
+    AppVersion = AA.get("AppVersion")
+    AppId = AA.get("AppId")
+    TaggedDistance = AA.get("TaggedDistance")
+    TaggedClient = AA.get("TaggedClient")
+    OculusId = AA.get("OCULUSId")
+    TitleId = AA.get("TitleId")
+    if Nonce is None:
+        return jsonify({'Error': 'Bad request', 'Message': 'Not Authenticated!'}), 304
+    if TitleId and TitleId != '3E875':
+        return jsonify({'Error': 'Bad request', 'Message': 'Invalid titleid!'}), 403
+    if Platform != 'Quest':
+        return jsonify({'Error': 'Bad request', 'Message': 'Invalid platform!'}), 403
+    return jsonify({
+        "ResultCode": 1,
+        "StatusCode": 200,
+        "Message": "authed with photon",
+        "Result": 0,
+        "UserId": UserId,
+        "AppId": AppId,
+        "AppVersion": AppVersion,
+        "Ticket": Ticket,
+        "Token": Token,
+        "Nonce": Nonce,
+        "Platform": Platform,
+        "Username": Username,
+        "PlayerRoomCount": PlayerRoomCount,
+        "GorillaTagger": GorillaTagger,
+        "CosmeticAuthentication": CosmeticAuthenticationV2,
+        "CosmeticsInRoom": CosmeticsInRoom,
+        "UpdatePlayerCosmetics": UpdatePlayerCosmetics,
+        "DLCOwnerShip": DLCOwnerShipV2,
+        "Currency": GorillaCorpCurrencyV1,
+        "RoomJoined": RoomJoined,     
+        "VirtualStump": VirtualStump,
+        "DeadMonke": DeadMonke,
+        "GhostCounter": GhostCounter,
+        "BroadcastRoom": BroadcastMyRoomV2,
+        "TaggedClient": TaggedClient,
+        "TaggedDistance": TaggedDistance,
+        "RPCS": RPCS
+    }), 200
+
+
 @app.route("/api/TitleData", methods=["POST", "GET"])
 def titledata():
     response = requests.post(
