@@ -134,13 +134,15 @@ def photonauth():
     GhostCounter = AA.get("GhostCounter")
     DirtyCosmeticSpawnnerV2 = AA.get("DirtyCosmeticSpawnnerV2")
     RoomJoined = AA.get("RoomJoined")
+    VirtualStump = AA.get("VirtualStump")
     PlayerRoomCount = AA.get("PlayerRoomCount")
     AppVersion = AA.get("AppVersion")
     AppId = AA.get("AppId")
     TaggedDistance = AA.get("TaggedDistance")
     TaggedClient = AA.get("TaggedClient")
     OculusId = AA.get("OCULUSId")
-    TitleId = AA.get("TitleId")
+    TitleId = AA.get("TITLE_ID")
+
     return jsonify({
         "ResultCode": 1,
         "StatusCode": 200,
@@ -149,12 +151,28 @@ def photonauth():
         "UserId": UserId,
         "AppId": AppId,
         "AppVersion": AppVersion,
-        "Ticket": Ticket,
-        "Token": Token,
+        "Ticket": AA.get("Ticket"),
+        "Token": AA.get("Token"),
         "Nonce": Nonce,
         "Platform": Platform,
-        "Username": Username,  
+        "Username": AA.get("Username"),
+        "PlayerRoomCount": PlayerRoomCount,
+        "GorillaTagger": GorillaTagger,
+        "CosmeticAuthentication": CosmeticAuthenticationV2,
+        "CosmeticsInRoom": CosmeticsInRoom,
+        "UpdatePlayerCosmetics": UpdatePlayerCosmetics,
+        "DLCOwnerShip": DLCOwnerShipV2,
+        "Currency": GorillaCorpCurrencyV1,
+        "RoomJoined": RoomJoined,     
+        "VirtualStump": VirtualStump,
+        "DeadMonke": DeadMonke,
+        "GhostCounter": GhostCounter,
+        "BroadcastRoom": BroadcastMyRoomV2,
+        "TaggedClient": TaggedClient,
+        "TaggedDistance": TaggedDistance,
+        "RPCS": RPCS
     }), 200
+
 
 
 @app.route("/api/TitleData", methods=["POST", "GET"])
