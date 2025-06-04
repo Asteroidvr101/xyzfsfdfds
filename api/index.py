@@ -170,6 +170,29 @@ def playfab_authentication():
             )
 
 
+@app.route("/api/CheckForBadName", methods=["POST", "GET"])
+def check_for_bad_name():
+    rjson = request.get_json() 
+    function_result = rjson["FunctionArgument"]
+    playfab_id = rjson["CallerEntityProfile"]["Lineage"]["MasterPlayerAccountId"]
+    name = function_result["name"].upper()
+    forRoom = function_result["forRoom"]
+
+    if forRoom == True:
+        return jsonify({"result": 0})
+    
+    link_response = requests.post(
+        url=f"https://{settings.TitleId}.playfabapi.com/Admin/UpdateUserTitleDisplayName",
+        json={
+            "DisplayName": name,
+            "PlayFabId": playfab_id,
+        },
+        headers=settings.get_auth_headers(),
+    ).json()
+    return jsonify({"result": 0})
+
+
+
 @app.route("/api/CachePlayFabId", methods=["POST"])
 def cache_playfab_id():
     return jsonify({"Message": "Success"}), 200
